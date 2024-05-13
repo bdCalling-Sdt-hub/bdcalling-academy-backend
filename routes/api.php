@@ -1,7 +1,11 @@
 <?php
 
+
+use App\Http\Controllers\RCategoryController;
+use App\Http\Controllers\RCourseController;
 use App\Http\Controllers\Api\SouperAdmin\AboutController;
 use App\Http\Controllers\Api\SouperAdmin\AssessionController;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -19,6 +23,11 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+
+
+Route::resource('categories',RCategoryController::class)->except('create','edit');
+Route::resource('courses',RCourseController::class)->except('create','edit');
 
 // ================SUPER ADMIN ===================//
 
@@ -38,3 +47,4 @@ Route::post('/update/terms', [AboutController::class, 'terms_condition']);
 // ========================= ASSESSION ======================== //
 
 Route::resource('/assession', AssessionController::class);
+
