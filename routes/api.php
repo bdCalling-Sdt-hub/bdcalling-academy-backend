@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\SouperAdmin\AboutController;
 use App\Http\Controllers\Api\SouperAdmin\AssessionController;
+use App\Http\Controllers\Api\SouperAdmin\SuccessStoryController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -38,3 +39,4 @@ Route::post('/update/terms', [AboutController::class, 'terms_condition']);
 // ========================= ASSESSION ======================== //
 
 Route::resource('/assession', AssessionController::class);
+Route::get('test', [SuccessStoryController::class, 'test']);
