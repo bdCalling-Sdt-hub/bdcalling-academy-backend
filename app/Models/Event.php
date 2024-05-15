@@ -5,11 +5,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class SuccessStory extends Model
+class Event extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'file',
+        'course_name',
+        'date',
+        'time',
+        'end_time',
+        'status',
+        'locations',
+        'descriptions'
     ];
 }

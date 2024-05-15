@@ -5,11 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class SuccessStory extends Model
+class Contactus extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'file',
+        'name',
+        'email',
+        'phone',
+        'details',
+        'course_name',
     ];
 }

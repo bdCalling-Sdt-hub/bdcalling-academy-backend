@@ -1,8 +1,12 @@
 <?php
 
-use App\Http\Controllers\Api\SouperAdmin\AboutController;
-use App\Http\Controllers\Api\SouperAdmin\AssessionController;
-use App\Http\Controllers\Api\SouperAdmin\SuccessStoryController;
+use App\Http\Controllers\Api\Admin\AddStudentController;
+use App\Http\Controllers\Api\SuperAdmin\AboutController;
+use App\Http\Controllers\Api\SuperAdmin\AssessionController;
+use App\Http\Controllers\Api\SuperAdmin\ContactUsController;
+use App\Http\Controllers\Api\SuperAdmin\EventController;
+use App\Http\Controllers\Api\SuperAdmin\GallerytController;
+use App\Http\Controllers\Api\SuperAdmin\successStoryController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -39,4 +43,17 @@ Route::post('/update/terms', [AboutController::class, 'terms_condition']);
 // ========================= ASSESSION ======================== //
 
 Route::resource('/assession', AssessionController::class);
-Route::get('test', [SuccessStoryController::class, 'test']);
+Route::resource('/success/story', successStoryController::class);
+Route::resource('/event', EventController::class);
+Route::resource('/gallery', GallerytController::class);
+
+// ========================= Add student ============== //
+
+Route::post('/add/student', [AddStudentController::class, 'addStudent']);
+
+// ==================== CONTACT US =====================//
+
+Route::post('/contacts', [ContactUsController::class, 'store']);  // Create
+Route::get('/contacts', [ContactUsController::class, 'index']);  // Read (All)
+Route::get('/contacts/{id}', [ContactUsController::class, 'show']);  // Read (Single)
+Route::delete('/contacts/{id}', [ContactUsController::class, 'destroy']);

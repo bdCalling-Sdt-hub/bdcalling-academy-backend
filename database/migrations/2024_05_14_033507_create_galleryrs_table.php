@@ -10,9 +10,9 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('success_stories', function (Blueprint $table) {
+        Schema::create('galleryrs', function (Blueprint $table) {
             $table->id();
-            $table->string('file');
+            $table->string('image');
             $table->timestamps();
         });
     }
@@ -22,6 +22,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('success_stories');
+        Schema::dropIfExists('galleryrs');
     }
 };

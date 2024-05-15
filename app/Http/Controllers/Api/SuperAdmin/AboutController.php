@@ -1,19 +1,14 @@
 <?php
 
-namespace App\Http\Controllers\Api\SouperAdmin;
-
-use App\Http\Controllers\Controller;
+namespace App\Http\Controllers\Api\SuperAdmin;
 use App\Http\Requests\AboutRequest;
 use App\Http\Requests\PrivactytRequest;
 use App\Http\Requests\TermstRequest;
-use App\Models\About;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use DB;
 
 class AboutController extends Controller
 {
-    // ==================== PRIVACTY ==================//
-
     public function show_privacy()
     {
         $privacy = DB::table('abouts')->select('privacy')->first();
