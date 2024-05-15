@@ -25,6 +25,11 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+
+
+Route::resource('categories',RCategoryController::class)->except('create','edit');
+Route::resource('courses',RCourseController::class)->except('create','edit');
+
 // ================SUPER ADMIN ===================//
 
 Route::get('/show/privacy', [AboutController::class, 'show_privacy']);
