@@ -179,6 +179,18 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+<<<<<<< HEAD
+        Tymon\JWTAuth\Providers\LaravelServiceProvider::class,
+
+        /*
+         * Custom Service Providers...
+         */
+        App\Providers\AwesomeServiceProvider::class,
+        App\Providers\TestServiceProvider::class,
+
+
+=======
+>>>>>>> c75f22f85699b032140412ae07bfaa958b6d5a0f
     ],
 
     /*
