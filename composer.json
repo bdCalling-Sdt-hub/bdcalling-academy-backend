@@ -10,8 +10,14 @@
         "laravel/framework": "^10.0",
         "laravel/sanctum": "^3.2",
         "laravel/tinker": "^2.8",
+<<<<<<< HEAD
         "laravel/vonage-notification-channel": "^3.3",
         "tymon/jwt-auth": "^2.1"
+=======
+        "pion/laravel-chunk-upload": "^1.5",
+        "spatie/image": "^3.6",
+        "spatie/laravel-medialibrary": "^11.4"
+>>>>>>> c75f22f85699b032140412ae07bfaa958b6d5a0f
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",
