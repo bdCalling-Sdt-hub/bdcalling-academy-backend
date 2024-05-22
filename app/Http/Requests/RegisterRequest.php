@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
+
 class RegisterRequest extends FormRequest
 {
 
@@ -18,11 +19,11 @@ class RegisterRequest extends FormRequest
         return [
             //
             'name' => 'required|string|min:2|max:100',
-            'email' => 'required|string|email|max:60|unique:users|contains_dot',
+            'email' => 'required|string|email|max:60',
             'password' => 'required|string|min:6|confirmed',
             'role' => ['required', Rule::in(['STUDENT', 'ADMIN', 'SUPER ADMIN', 'TRAINER'])],
-            'email.contains_dot' => 'without (.) Your email is invalid',
-            'otp' => 'required',
+//            'email.contains_dot' => 'without (.) Your email is invalid',
+            'otp' => '',
 
         ];
     }

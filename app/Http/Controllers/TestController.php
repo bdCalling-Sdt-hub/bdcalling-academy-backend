@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Course;
+use App\Service\TestServiceInterface;
 use Illuminate\Http\Request;
+use App\Service\AwesomeServiceInterface;
+
 
 class TestController extends Controller
 {
@@ -28,5 +31,18 @@ class TestController extends Controller
             'message' => 'Batch is created successfully',
             'data' => $batch_id,
         ]);
+    }
+
+
+    public function doAwesome(AwesomeServiceInterface $awesomeService)
+    {
+        $awesomeService->doAwesomeThing();
+    }
+
+    public function testService(TestServiceInterface $testService)
+    {
+        $firstParameter = 'First Parameter';
+        $secondParameter = 'Second Parameter';
+        $testService->testService($firstParameter,$secondParameter);
     }
 }
