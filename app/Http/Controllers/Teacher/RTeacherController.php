@@ -75,6 +75,15 @@ class RTeacherController extends Controller
 
     public function destroy(string $id)
     {
-        //
+        $teacher = Teacher::find($id);
+        if (!$teacher) {
+            return response()->json(['error' => 'Teacher not found'], 404);
+        }
+        DB::transaction(function() use ($teacher) {
+
+            $teacher->user()->delete();
+            $teacher->delete();
+        });
+        return response()->json(['message' => 'Teacher, associated user, and media deleted successfully'], 200);
     }
 }
