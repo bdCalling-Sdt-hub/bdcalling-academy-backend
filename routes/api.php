@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\ModuleController;
 use App\Http\Controllers\RCategoryController;
 use App\Http\Controllers\RCourseController;
+use App\Http\Controllers\Teacher\RTeacherController;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\AllStudentController;
 
@@ -96,3 +97,9 @@ Route::post('/contacts', [ContactUsController::class, 'store']);  // Create
 Route::get('/contacts', [ContactUsController::class, 'index']);  // Read (All)
 Route::get('/contacts/{id}', [ContactUsController::class, 'show']);  // Read (Single)
 Route::delete('/contacts/{id}', [ContactUsController::class, 'destroy']);
+
+
+
+//====================== Teacher ============================
+
+Route::resource('teachers',RTeacherController::class)->except('create','edit');

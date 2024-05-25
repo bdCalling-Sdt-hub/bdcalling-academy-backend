@@ -102,7 +102,6 @@ class RCourseController extends Controller
             $course->status = $request->status ?? $course->status; // You may want to update the status as well
 
             if ($request->hasFile('image') && $request->file('image')->isValid()) {
-                // Update thumbnail only if a new image is provided
                 $course->thumbnail = saveImage($request, 'image');
             }
 
