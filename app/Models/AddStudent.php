@@ -13,6 +13,7 @@ class AddStudent extends Model
         'category_id',
         'batch_id',
         'user_id',
+        'course_id',
         'phone',
         'gender',
         'riligion',
@@ -23,4 +24,29 @@ class AddStudent extends Model
         'add_by',
         'student_type',
     ];
+
+
+
+        public function user()
+        {
+            return $this->belongsTo(User::class);
+        }
+    
+        public function batch()
+        {
+            return $this->belongsTo(Batch::class);
+        }
+    
+        public function course()
+        {
+            return $this->belongsTo(Course::class);
+        }
+    
+        public function orders()
+        {
+            return $this->hasMany(Order::class);
+        }
+    
+    
+
 }

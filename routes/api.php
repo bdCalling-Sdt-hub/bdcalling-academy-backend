@@ -6,6 +6,7 @@ use App\Http\Controllers\RCategoryController;
 use App\Http\Controllers\RCourseController;
 use App\Http\Controllers\Teacher\RTeacherController;
 use App\Http\Controllers\TestController;
+use App\Http\Controllers\AllStudentController;
 
 use App\Http\Controllers\Api\Admin\AddStudentController;
 use App\Http\Controllers\Api\SuperAdmin\AboutController;
@@ -14,7 +15,7 @@ use App\Http\Controllers\Api\SuperAdmin\ContactUsController;
 use App\Http\Controllers\Api\SuperAdmin\EventController;
 use App\Http\Controllers\Api\SuperAdmin\GallerytController;
 use App\Http\Controllers\Api\SuperAdmin\successStoryController;
-
+use App\Http\Controllers\Api\SuperAdmin\AdmittedController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -53,8 +54,23 @@ Route::get('test-service',[TestController::class,'testService']);
 
 // ================SUPER ADMIN ===================//
 
-Route::get('/show/privacy', [AboutController::class, 'show_privacy']);
 Route::post('/privacy', [AboutController::class, 'privacyPolicy']);
+Route::get('/show/privacy', [AboutController::class, 'show_privacy']);
+
+Route::get('/show/all/student', [AllStudentController::class, 'Show_all_student']);
+Route::get('/show/auth/student', [AllStudentController::class, 'auth_type_student']);
+Route::get('/show/techer/student', [AllStudentController::class, 'teacher_type_student']);
+Route::get('/student/details/{id}', [AllStudentController::class, 'student_details']);
+Route::get('/student/delete/{id}', [AllStudentController::class, 'destroy']);
+Route::post('/admit', [AllStudentController::class, 'addmitStudent']);
+Route::get('/admitted/student', [AdmittedController::class, 'admittedStudent']);
+Route::post('/admit/payment', [AdmittedController::class, 'admittedPayment']);
+Route::get('/singel/addmit/student/{id}', [AdmittedController::class, 'singel_admitted_student']);
+Route::post('/dropout/addmit/student', [AdmittedController::class, 'dropout_student']);
+// ========================= Add student ============== //
+
+Route::post('/add/student', [AddStudentController::class, 'addStudent']);
+
 
 // ============ About ================//
 
@@ -73,9 +89,7 @@ Route::resource('/success/story', successStoryController::class);
 Route::resource('/event', EventController::class);
 Route::resource('/gallery', GallerytController::class);
 
-// ========================= Add student ============== //
 
-Route::post('/add/student', [AddStudentController::class, 'addStudent']);
 
 // ==================== CONTACT US =====================//
 
