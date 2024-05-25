@@ -6,6 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class TeacherRequest extends FormRequest
 {
+
     public function authorize(): bool
     {
         return true;
@@ -23,5 +24,8 @@ class TeacherRequest extends FormRequest
             'designation' => 'required|string',
             'expert' => 'required|string',
         ];
+
     }
+
+
 }

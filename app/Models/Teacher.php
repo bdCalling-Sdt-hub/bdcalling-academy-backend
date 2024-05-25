@@ -16,7 +16,6 @@ class Teacher extends Model
         'phone_number',
         'designation',
         'expert',
-
     ];
 
     public function user():BelongsTo

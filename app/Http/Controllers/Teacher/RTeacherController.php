@@ -7,6 +7,7 @@ use App\Http\Requests\TeacherRequest;
 use App\Models\Teacher;
 use App\Models\User;
 use App\Services\TeacherService;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -44,37 +45,6 @@ class RTeacherController extends Controller
             return response()->json(['message' => 'Failed to add teacher', 'error' => $e->getMessage()], 500);
         }
     }
-//    public function store(TeacherRequest $request)
-//    {
-//        DB::beginTransaction();
-//
-//        try {
-//            $user = User::create([
-//                'name' => $request->name,
-//                'email' => $request->email,
-//                'password' => bcrypt($request->password), // Hash the password
-//                'otp' => 0,
-//            ]);
-//
-//            $teacher = Teacher::create([
-//                'user_id' => $user->id,
-//                'course_category_id' => $request->course_category_id,
-//                'phone_number' => $request->phone_number,
-//                'designation' => $request->designation,
-//                'expert' => $request->expert,
-//                'created_by' => 'super admin add', // Assuming you're using authentication
-//                'status' => 'active',
-//            ]);
-//
-//            DB::commit();
-//
-//            return response()->json(['message' => 'Teacher added successfully', 'teacher' => $teacher], 201);
-//
-//        } catch (\Exception $e) {
-//            DB::rollBack();
-//            return response()->json(['message' => 'Failed to add teacher', 'error' => $e->getMessage()], 500);
-//        }
-//    }
     public function show(string $id)
     {
         //
@@ -85,9 +55,18 @@ class RTeacherController extends Controller
         //
     }
 
-    public function update(Request $request, string $id)
+    public function update(Request $request, string $id): JsonResponse
     {
-        //
+        try {
+            $teacher = $this->teacherService->updateTeacher($request->all(), $id);
+
+            return response()->json(['message' => 'Teacher updated successfully', 'teacher' => $teacher], 200);
+
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['message' => 'Teacher not found', 'error' => $e->getMessage()], 404);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed to update teacher', 'error' => $e->getMessage()], 500);
+        }
     }
 
     public function destroy(string $id)
