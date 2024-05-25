@@ -15,12 +15,13 @@ class TeacherRequest extends FormRequest
     {
         return [
             //
-            'first_name' => 'nullable',
-            'email' => 'nullable',
-            'phone_number' => 'nullable',
-            'designation' => 'nullable',
-            'created_by' => 'nullable',
-            'status' => 'nullable',
+            'name' => 'required|string',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|string|min:6|confirmed', // Assuming password is also required
+            'course_category_id' => 'required|integer',
+            'phone_number' => 'required|string',
+            'designation' => 'required|string',
+            'expert' => 'required|string',
         ];
     }
 }
