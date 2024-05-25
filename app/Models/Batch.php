@@ -21,9 +21,9 @@ class Batch extends Model
         return $this->belongsTo(CourseCategory::class);
     }
 
-    public function student():HasMany
+    public function addStudents()
     {
-        return $this->hasMany(Student::class);
+        return $this->hasMany(AddStudent::class);
     }
 
     public function user():HasMany
