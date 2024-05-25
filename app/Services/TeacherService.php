@@ -30,7 +30,7 @@ class TeacherService
             'phone_number' => $data['phone_number'],
             'designation' => $data['designation'],
             'expert' => $data['expert'],
-            'created_by' => 'super admin add', // Assuming you're using authentication
+            'created_by' => $data['created_by'] ?? null, // Assuming you're using authentication
             'status' => 'active',
         ]);
 
@@ -49,6 +49,7 @@ class TeacherService
 
     public function updateTeacher(array $data, string $id)
     {
+
         DB::beginTransaction();
 
         try {
@@ -58,8 +59,8 @@ class TeacherService
             // Update the user
             $user = $teacher->user;
             $user->update([
-                'name' => $data['name'],
-                'email' => $data['email'],
+                'name' => $data['name'] ?? $teacher->name,
+                'email' => $data['email'] ?? $teacher->email,
                 // Only update the password if provided
                 'password' => isset($data['password']) ? bcrypt($data['password']) : $user->password,
             ]);
@@ -67,10 +68,11 @@ class TeacherService
             // Update the teacher
             $teacher->update([
                 'course_category_id' => $data['course_category_id'],
-                'phone_number' => $data['phone_number'],
-                'designation' => $data['designation'],
-                'expert' => $data['expert'],
-                'status' => $data['status'],
+                'phone_number' => $data['phone_number'] ?? $teacher->phone_number,
+                'designation' => $data['designation'] ?? $teacher->designation,
+                'expert' => $data['expert'] ?? $teacher->expert,
+                'status' => $data['status'] ?? $teacher->status,
+                'created_by' => $data['created_by'] ?? $teacher->created_by,
             ]);
 
             // Commit the transaction

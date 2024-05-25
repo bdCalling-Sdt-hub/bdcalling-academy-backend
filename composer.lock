@@ -4,11 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-<<<<<<< HEAD
-    "content-hash": "7ab4ad356e89635a918bdad52f5ef661",
-=======
-    "content-hash": "8d18b7724feb6f40140a392b35e6046e",
->>>>>>> c75f22f85699b032140412ae07bfaa958b6d5a0f
+    "content-hash": "1db4f54e3c666b4cd306c928977ef288",
     "packages": [
         {
             "name": "brick/math",
@@ -3765,16 +3761,16 @@
         },
         {
             "name": "spatie/laravel-medialibrary",
-            "version": "11.4.8",
+            "version": "11.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/laravel-medialibrary.git",
-                "reference": "2c50eee8310a90b2210ff5e4907908333f38915c"
+                "reference": "37ecca8a5166c9290388b681923bc336a378ca3d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/laravel-medialibrary/zipball/2c50eee8310a90b2210ff5e4907908333f38915c",
-                "reference": "2c50eee8310a90b2210ff5e4907908333f38915c",
+                "url": "https://api.github.com/repos/spatie/laravel-medialibrary/zipball/37ecca8a5166c9290388b681923bc336a378ca3d",
+                "reference": "37ecca8a5166c9290388b681923bc336a378ca3d",
                 "shasum": ""
             },
             "require": {
@@ -3857,7 +3853,7 @@
             ],
             "support": {
                 "issues": "https://github.com/spatie/laravel-medialibrary/issues",
-                "source": "https://github.com/spatie/laravel-medialibrary/tree/11.4.8"
+                "source": "https://github.com/spatie/laravel-medialibrary/tree/11.5.1"
             },
             "funding": [
                 {
@@ -3869,7 +3865,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-05-06T09:16:55+00:00"
+            "time": "2024-05-23T08:10:59+00:00"
         },
         {
             "name": "spatie/laravel-package-tools",
@@ -3991,6 +3987,53 @@
                 }
             ],
             "time": "2023-12-25T11:46:58+00:00"
+        },
+        {
+            "name": "stella-maris/clock",
+            "version": "0.1.7",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/stella-maris-solutions/clock.git",
+                "reference": "fa23ce16019289a18bb3446fdecd45befcdd94f8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/stella-maris-solutions/clock/zipball/fa23ce16019289a18bb3446fdecd45befcdd94f8",
+                "reference": "fa23ce16019289a18bb3446fdecd45befcdd94f8",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.0|^8.0",
+                "psr/clock": "^1.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "StellaMaris\\Clock\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Andreas Heigl",
+                    "role": "Maintainer"
+                }
+            ],
+            "description": "A pre-release of the proposed PSR-20 Clock-Interface",
+            "homepage": "https://gitlab.com/stella-maris/clock",
+            "keywords": [
+                "clock",
+                "datetime",
+                "point in time",
+                "psr20"
+            ],
+            "support": {
+                "source": "https://github.com/stella-maris-solutions/clock/tree/0.1.7"
+            },
+            "time": "2022-11-25T16:15:06+00:00"
         },
         {
             "name": "symfony/console",

@@ -7,6 +7,7 @@ use App\Http\Requests\TeacherRequest;
 use App\Models\Teacher;
 use App\Models\User;
 use App\Services\TeacherService;
+use http\Env\Response;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -48,18 +49,21 @@ class RTeacherController extends Controller
     public function show(string $id)
     {
         //
+        $teachers = Teacher::with('user')->where('id',$id)->first();
+        return response()->json(['message' => 'Teacher', 'teacher' => $teachers],200);
     }
 
     public function edit(string $id)
     {
         //
+
     }
 
-    public function update(Request $request, string $id): JsonResponse
+    public function update(Request $request, string $id):JsonResponse
     {
+
         try {
             $teacher = $this->teacherService->updateTeacher($request->all(), $id);
-
             return response()->json(['message' => 'Teacher updated successfully', 'teacher' => $teacher], 200);
 
         } catch (ModelNotFoundException $e) {
