@@ -23,6 +23,7 @@ class TeacherRequest extends FormRequest
             'phone_number' => 'required|string',
             'designation' => 'required|string',
             'expert' => 'required|string',
+            'role' => 'UPPERCASE|string'
         ];
 
     }
