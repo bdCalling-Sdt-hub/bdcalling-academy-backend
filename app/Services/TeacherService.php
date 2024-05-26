@@ -1,8 +1,12 @@
 <?php
 namespace App\Services;
 
+use App\Models\LeaveApplication;
 use App\Models\User;
 use App\Models\Teacher;
+use Carbon\Carbon;
+use http\Env\Response;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Exception;
@@ -20,8 +24,10 @@ class TeacherService
             'email' => $data['email'],
             'password' => bcrypt($data['password']),
             'otp' => 0,
-            'role' => 'TEACHER',
+            'role' => $data['role'],
         ]);
+
+        $user->update(['email_verified_at' => now()]);
 
         // Create the teacher
         $teacher = Teacher::create([
@@ -85,6 +91,71 @@ class TeacherService
             DB::rollBack();
             Log::error('Error updating teacher: ' . $e->getMessage());
             throw $e;
+        }
+    }
+
+    public function getFilteredLeaveApplications(Request $request)
+    {
+        $query = LeaveApplication::with('user.teacher');
+
+        // Apply filters
+        if ($request->has('name')) {
+            $query->whereHas('user.teacher', function($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->input('name') . '%');
+            });
+        }
+
+        if ($request->has('phone_number')) {
+            $query->whereHas('user.teacher', function($q) use ($request) {
+                $q->where('phone_number', 'like', '%' . $request->input('phone_number') . '%');
+            });
+        }
+
+        if ($request->has('designation')) {
+            $query->whereHas('user.teacher', function($q) use ($request) {
+                $q->where('designation', 'like', '%' . $request->input('designation') . '%');
+            });
+        }
+
+        if ($request->has('leave_status')) {
+            $query->where('leave_status', 'like','%'  . $request->input('leave_status') . '%' );
+        }
+        return $query->paginate(9);
+    }
+
+    public function rejectLeave(Request $request)
+    {
+        try{
+            $id = $request->id;
+            $approve_application = LeaveApplication::find($id);
+            if (empty($approve_application))
+            {
+                return response()->json(['message' => 'No application request found', 'data' => $approve_application],404);
+            }
+            $approve_application->recommend_by = $request->recommend_by ?? $approve_application->recommend_by;
+            $approve_application->leave_status = 'rejected';
+            $approve_application->update();
+            return response()->json(['message' => 'Leave application is rejected successfully', 'data' => $approve_application ],200);
+        }catch (\Exception $e) {
+            return response()->json(['message' => 'Something Went Wrong!', 'error' => $e->getMessage()],500);
+        }
+    }
+
+    public function approveLeave(Request $request)
+    {
+        try{
+            $id = $request->id;
+            $approve_application = LeaveApplication::find($id);
+            if (empty($approve_application))
+            {
+                return response()->json(['message' => 'No application request found', 'data' => $approve_application],404);
+            }
+            $approve_application->recommend_by = $request->recommend_by ?? $approve_application->recommend_by;
+            $approve_application->leave_status = 'approved';
+            $approve_application->update();
+            return response()->json(['message' => 'Leave application is approved successfully', 'data' => $approve_application ],200);
+        }catch (\Exception $e) {
+            return response()->json(['message' => 'Something Went Wrong!', 'error' => $e->getMessage()],500);
         }
     }
 }

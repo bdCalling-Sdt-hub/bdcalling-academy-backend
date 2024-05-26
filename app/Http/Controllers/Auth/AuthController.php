@@ -61,7 +61,6 @@ class AuthController extends Controller
                 'password' => Hash::make($request->password),
                 'role' => $request->role,
                 'otp' => Str::random(6),
-                'email_verified_at' => new Carbon(),
             ];
 
             $user = User::create($userData);
@@ -244,6 +243,19 @@ class AuthController extends Controller
         } else {
             $user->update(['password' => Hash::make($request->password)]);
             return response()->json(['message' => 'Password reset successfully'], 200);
+        }
+    }
+
+    public function loggedUserData()
+    {
+        if ($this->guard()->user()) {
+            $user = $this->guard()->user();
+
+            return response()->json([
+                'user' => $user
+            ]);
+        } else {
+            return response()->json(['message' => 'You are unauthorized']);
         }
     }
 }

@@ -5,6 +5,7 @@ use App\Http\Controllers\ModuleController;
 use App\Http\Controllers\RCategoryController;
 use App\Http\Controllers\RCourseController;
 use App\Http\Controllers\Teacher\RTeacherController;
+use App\Http\Controllers\Teacher\TeacherDashboardController;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\AllStudentController;
 
@@ -100,6 +101,23 @@ Route::delete('/contacts/{id}', [ContactUsController::class, 'destroy']);
 
 
 
-//====================== Teacher ============================
+Route::middleware(['super.admin'])->group(function (){
 
-Route::resource('teachers',RTeacherController::class)->except('create','edit');
+    //====================== Super Admin Teacher ============================
+    Route::resource('teachers',RTeacherController::class)->except('create','edit');
+
+    Route::get('admin-show-leave-application',[RTeacherController::class,'showLeaveApplication']);
+    Route::get('approve-leave-application',[RTeacherController::class,'approveLeaveRequest']);
+    Route::get('reject-leave-application',[RTeacherController::class,'rejectLeaveRequest']);
+});
+
+Route::middleware(['mentor'])->group(function (){
+
+    //===================== Trainer Dashboard ================================
+
+    Route::post('request-leave-application',[TeacherDashboardController::class,'requestLeaveApplication']);
+    Route::get('show-leave-application',[TeacherDashboardController::class,'showLeaveRequest']);
+
+});
+
+

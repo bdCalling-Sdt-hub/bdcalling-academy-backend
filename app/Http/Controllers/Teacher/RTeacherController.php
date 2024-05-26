@@ -4,10 +4,9 @@ namespace App\Http\Controllers\Teacher;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\TeacherRequest;
+use App\Models\LeaveApplication;
 use App\Models\Teacher;
-use App\Models\User;
 use App\Services\TeacherService;
-use http\Env\Response;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -18,8 +17,7 @@ class RTeacherController extends Controller
 
     public function index()
     {
-        //
-        $teachers = Teacher::with('user')->paginate(9);
+        $teachers = Teacher::with('user')->paginate(6);
         return response()->json(['message' => 'Teacher List', 'teacher' => $teachers],200);
     }
 
@@ -85,5 +83,25 @@ class RTeacherController extends Controller
             $teacher->delete();
         });
         return response()->json(['message' => 'Teacher, associated user, and media deleted successfully'], 200);
+    }
+
+    public function showLeaveApplication(Request $request)
+    {
+        try {
+            $leave_applications = $this->teacherService->getFilteredLeaveApplications($request);
+            return response()->json(['message' => 'Leave Application List', 'data' => $leave_applications]);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Something went wrong!', 'error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function approveLeaveRequest(Request $request)
+    {
+        return $this->teacherService->approveLeave($request);
+    }
+
+    public function rejectLeaveRequest(Request $request)
+    {
+       return $this->teacherService->rejectLeave($request);
     }
 }
