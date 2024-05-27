@@ -17,6 +17,7 @@ use App\Http\Controllers\Api\SuperAdmin\EventController;
 use App\Http\Controllers\Api\SuperAdmin\GallerytController;
 use App\Http\Controllers\Api\SuperAdmin\successStoryController;
 use App\Http\Controllers\Api\SuperAdmin\AdmittedController;
+use App\Http\Controllers\Api\SuperAdmin\DropoutStudentController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -68,6 +69,8 @@ Route::get('/admitted/student', [AdmittedController::class, 'admittedStudent']);
 Route::post('/admit/payment', [AdmittedController::class, 'admittedPayment']);
 Route::get('/singel/addmit/student/{id}', [AdmittedController::class, 'singel_admitted_student']);
 Route::post('/dropout/addmit/student', [AdmittedController::class, 'dropout_student']);
+Route::get('/show/dropout/student', [DropoutStudentController::class, 'show_dropout_student']);
+//Route::post('/dropout/addmit/student', [AdmittedController::class, 'dropout_student']);
 // ========================= Add student ============== //
 
 Route::post('/add/student', [AddStudentController::class, 'addStudent']);
