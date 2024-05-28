@@ -71,7 +71,7 @@ Route::post('/admit/payment', [AdmittedController::class, 'admittedPayment']);
 Route::get('/singel/addmit/student/{id}', [AdmittedController::class, 'singel_admitted_student']);
 Route::post('/dropout/addmit/student', [AdmittedController::class, 'dropout_student']);
 Route::get('/show/dropout/student', [DropoutStudentController::class, 'show_dropout_student']);
-//Route::post('/dropout/addmit/student', [AdmittedController::class, 'dropout_student']);
+Route::post('/refund', [DropoutStudentController::class, 'store_refund']);
 
 // ========================= Add student ============== //
 
