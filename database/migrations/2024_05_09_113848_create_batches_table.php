@@ -11,19 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Schema::create('batches', function (Blueprint $table) {
-        //     $table->id();
-        //     // $table->foreignId('course_id')->constrained()->onDelete('cascade');
-        //     // $table->foreignId('trainer_id')->constrained()->onDelete('cascade')->nullable();
-        //     // $table->foreignId('coupon_id')->constrained()->onDelete('cascade')->nullable();
-        //     // $table->string('batch_name');
-        //     // $table->dateTime('start_time');
-        //     // $table->dateTime('end_time');
-        //     // $table->string('total_seat');
-        //     // $table->string('seat_left')->nullable();
-        //     // $table->float('discount')->nullable();
-        //     $table->timestamps();
-        // });
+        Schema::create('batches', function (Blueprint $table) {
+            $table->id();
+            $table->string('batch_id');
+            $table->foreignId('course_id')->constrained()->onDelete('cascade');
+            $table->foreignId('trainer_id')->nullable()->constrained()->onDelete('cascade');
+            $table->foreignId('coupon_id')->nullable()->constrained()->onDelete('cascade');
+            $table->string('batch_name');
+            $table->dateTime('start_time');
+            $table->dateTime('end_time');
+            $table->unsignedInteger('total_seat'); // Changed to integer
+            $table->unsignedInteger('seat_left')->nullable(); // Changed to integer and nullable
+            $table->float('discount')->nullable();
+            $table->timestamps();
+        });
     }
 
     /**

@@ -15,7 +15,7 @@ class TestController extends Controller
         $course_id = 1;
         $course_count = Course::where('id', $course_id)->count();
         $count_formatted = str_pad($course_count, 2, '0', STR_PAD_LEFT);
-        $academy_name = 'BAC';
+        $academy_name = 'BCA';
         $course_type = 'Online';
         $course_name = 'php and laravel';
         $course_type = strtoupper($course_type);
