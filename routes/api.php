@@ -18,6 +18,7 @@ use App\Http\Controllers\Api\SuperAdmin\GallerytController;
 use App\Http\Controllers\Api\SuperAdmin\successStoryController;
 use App\Http\Controllers\Api\SuperAdmin\AdmittedController;
 use App\Http\Controllers\Api\SuperAdmin\DropoutStudentController;
+use App\Http\Controllers\Api\SuperAdmin\ReviewController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -71,9 +72,14 @@ Route::get('/singel/addmit/student/{id}', [AdmittedController::class, 'singel_ad
 Route::post('/dropout/addmit/student', [AdmittedController::class, 'dropout_student']);
 Route::get('/show/dropout/student', [DropoutStudentController::class, 'show_dropout_student']);
 //Route::post('/dropout/addmit/student', [AdmittedController::class, 'dropout_student']);
+
 // ========================= Add student ============== //
 
 Route::post('/add/student', [AddStudentController::class, 'addStudent']);
+
+// ===================== Add Review ================= //
+
+Route::resource('reviews', ReviewController::class);
 
 
 // ============ About ================//
