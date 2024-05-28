@@ -1,9 +1,11 @@
 <?php
 
+use App\Http\Controllers\AddEmployeeController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\ModuleController;
 use App\Http\Controllers\RCategoryController;
 use App\Http\Controllers\RCourseController;
+use App\Http\Controllers\Teacher\RoutineController;
 use App\Http\Controllers\Teacher\RTeacherController;
 use App\Http\Controllers\Teacher\TeacherDashboardController;
 use App\Http\Controllers\TestController;
@@ -112,15 +114,23 @@ Route::middleware(['super.admin'])->group(function (){
     Route::get('admin-show-leave-application',[RTeacherController::class,'showLeaveApplication']);
     Route::get('approve-leave-application',[RTeacherController::class,'approveLeaveRequest']);
     Route::get('reject-leave-application',[RTeacherController::class,'rejectLeaveRequest']);
+
+
+    //====================== Manage Admins ====================================
+    Route::resource('admins',AddEmployeeController::class)->except('create','edit');
+
+    //====================== Teachers Payment ====================================
+
+
 });
 
-Route::middleware(['mentor'])->group(function (){
+Route::middleware(['mentor','auth:api'])->group(function (){
 
     //===================== Trainer Dashboard ================================
 
     Route::post('request-leave-application',[TeacherDashboardController::class,'requestLeaveApplication']);
     Route::get('show-leave-application',[TeacherDashboardController::class,'showLeaveRequest']);
-
+    Route::resource('routines',RoutineController::class)->except('create','edit');
 });
 
 

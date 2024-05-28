@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->string('batch_id');
             $table->foreignId('course_id')->constrained()->onDelete('cascade');
-            $table->foreignId('trainer_id')->nullable()->constrained()->onDelete('cascade');
             $table->foreignId('coupon_id')->nullable()->constrained()->onDelete('cascade');
             $table->string('batch_name');
             $table->dateTime('start_time');
@@ -27,9 +26,6 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('batches');
