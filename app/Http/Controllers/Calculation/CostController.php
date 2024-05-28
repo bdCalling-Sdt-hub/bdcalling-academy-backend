@@ -7,5 +7,8 @@ use Illuminate\Http\Request;
 
 class CostController extends Controller
 {
+    public function addTeacherSalary(Request $request)
+    {
 
+    }
 }
