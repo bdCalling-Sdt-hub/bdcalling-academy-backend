@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AddEmployeeController;
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Calculation\CostController;
 use App\Http\Controllers\ModuleController;
 use App\Http\Controllers\RCategoryController;
 use App\Http\Controllers\RCourseController;
@@ -120,7 +121,7 @@ Route::middleware(['super.admin'])->group(function (){
     Route::resource('admins',AddEmployeeController::class)->except('create','edit');
 
     //====================== Teachers Payment ====================================
-
+    Route::post('add-teacher-salary',[CostController::class,'addTeacherSalary']);
 
 });
 
