@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api\SuperAdmin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\AddStudent;
+use App\Models\Refund;
+use App\Http\Requests\RefundRequest;
 class DropoutStudentController extends Controller
 {
     public function show_dropout_student(Request $request)
@@ -48,5 +50,25 @@ class DropoutStudentController extends Controller
 
         // Return the paginated results
         return response()->json($students);
+    }
+
+    public function store_refund(RefundRequest $request)
+    {
+        // Validate the request data using the rules defined in RefundRequest
+        $validatedData = $request->validated();
+    
+        // Create a new refund record in the database
+        $refund = new Refund();
+        $refund->user_id = $validatedData['user_id'];
+        $refund->course_id = $validatedData['course_id'];
+        $refund->batch_id = $validatedData['batch_id'];
+        $refund->refund_amount = $validatedData['refund_amount'];
+        $refund->refund_by = $validatedData['refund_by'];
+        
+        // Save the record to the database
+        $refund->save();
+    
+        // Optionally, you can return a response or redirect
+        return response()->json(['message' => 'Refund record created successfully', 'refund' => $refund], 201);
     }
 }
