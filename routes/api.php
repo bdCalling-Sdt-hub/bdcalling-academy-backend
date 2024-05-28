@@ -19,6 +19,7 @@ use App\Http\Controllers\Api\SuperAdmin\successStoryController;
 use App\Http\Controllers\Api\SuperAdmin\AdmittedController;
 use App\Http\Controllers\Api\SuperAdmin\DropoutStudentController;
 use App\Http\Controllers\Api\SuperAdmin\ReviewController;
+use App\Http\Controllers\Api\SuperAdmin\IncludeCostController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -81,6 +82,8 @@ Route::post('/add/student', [AddStudentController::class, 'addStudent']);
 
 Route::resource('reviews', ReviewController::class);
 
+// ===================== ADD INCLUDE COST ================= //
+Route::resource('/include/cost', IncludeCostController::class);
 
 // ============ About ================//
 
