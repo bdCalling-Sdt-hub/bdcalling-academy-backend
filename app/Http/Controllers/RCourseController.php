@@ -46,6 +46,7 @@ class RCourseController extends Controller
             $courses->job_position = $request->job_position;
             $courses->popular_section = $request->popular_section;
             $courses->status = 'pending';
+            $courses->course_type = $request->course_type;
             $courses->save();
 
             return response()->json([
@@ -84,7 +85,6 @@ class RCourseController extends Controller
     {
         try {
             $course = Course::findOrFail($id);
-
             $course->course_category_id = $request->course_category_id ?? $course->course_category_id;
             $course->course_name = $request->course_name ?? $course->course_name;
             $course->language = $request->language ?? $course->language;
@@ -100,6 +100,7 @@ class RCourseController extends Controller
             $course->job_position = $request->job_position ?? $course->job_position;
             $course->popular_section = $request->popular_section ?? $course->popular_section;
             $course->status = $request->status ?? $course->status; // You may want to update the status as well
+            $course->course_type = $request->course_type ?? $course->course_type;
 
             if ($request->hasFile('image') && $request->file('image')->isValid()) {
                 $course->thumbnail = saveImage($request, 'image');

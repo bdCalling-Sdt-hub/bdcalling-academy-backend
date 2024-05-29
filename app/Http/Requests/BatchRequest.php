@@ -15,15 +15,9 @@ class BatchRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
             'batch_name' => 'required | string ',
             'course_id' => 'required',
-            'start_time' => '',
-            'end_time' => '',
-            'total_seat' => 'string',
-            'seat_left' => 'nullable',
-            'discount' => 'float'
-
+            'batch_type' => 'required'
         ];
     }
 }

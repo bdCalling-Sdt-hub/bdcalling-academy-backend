@@ -12,13 +12,28 @@ class RoutineController extends Controller
 
     public function index(Request $request)
     {
-        $subject = $request->subject;
-        $batch = $request->batch;
-        $date = $request->date;
+        $module_title = $request->input('module_title');
+        $batch_id = $request->input('batch_id');
+        $date = $request->input('date');
 
-        $routine = Routine::paginate(9);
-        return response()->json(['message'=> 'Routine' , 'data' => $routine]);
+        $query = Routine::with('batch','course_module')->get();
+
+        if ($module_title) {
+            $query->where('module_title', 'like', '%' . $module_title . '%');
+        }
+        if ($batch_id) {
+            $query->where('batch_id', $batch_id);
+        }
+        if ($date) {
+            $query->whereDate('date', $date);
+        }
+
+        // Paginate the results
+        $routine = $query->paginate(9);
+
+        return response()->json(['message' => 'Routine retrieved successfully', 'data' => $routine]);
     }
+
 
     public function create()
     {

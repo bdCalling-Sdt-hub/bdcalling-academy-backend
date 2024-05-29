@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Routing\Route;
 
 class Batch extends Model
 {
@@ -29,5 +30,10 @@ class Batch extends Model
     public function user():HasMany
     {
         return $this->hasMany(User::class);
+    }
+
+    public function routine():HasMany
+    {
+        return $this->hasMany(Routine::class);
     }
 }

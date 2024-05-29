@@ -27,6 +27,7 @@ class TestController extends Controller
 
         $batch_id = $academy_name . '-' . $course_type_filter . $course_name_filter . '-' . $year . $count_formatted;
 
+
         return response()->json([
             'message' => 'Batch is created successfully',
             'data' => $batch_id,
