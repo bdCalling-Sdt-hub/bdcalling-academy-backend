@@ -29,6 +29,7 @@ return new class extends Migration
             $table->string('job_position');
             $table->boolean('popular_section');
             $table->string('status');
+            $table->string('course_type');
             $table->timestamps();
         });
     }

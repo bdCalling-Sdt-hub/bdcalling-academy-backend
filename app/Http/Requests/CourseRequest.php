@@ -31,6 +31,7 @@ class CourseRequest extends FormRequest
             'tools' => 'required',
             'job_position' => 'required',
             'popular_section' => 'required',
+            'course_type' => 'required',
         ];
     }
 }

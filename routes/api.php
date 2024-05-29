@@ -4,6 +4,7 @@ use App\Http\Controllers\AddEmployeeController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Calculation\CostController;
 use App\Http\Controllers\ModuleController;
+use App\Http\Controllers\RBatchController;
 use App\Http\Controllers\RCategoryController;
 use App\Http\Controllers\RCourseController;
 use App\Http\Controllers\Teacher\RoutineController;
@@ -44,15 +45,12 @@ Route::group([
 Route::resource('categories',RCategoryController::class)->except('create','edit');
 Route::resource('courses',RCourseController::class)->except('create','edit');
 
-//module add
-Route::post('add-module',[ModuleController::class,'addModule']);
-Route::get('show-module',[ModuleController::class,'showModule']);
+
 
 //teacher add
 
 //create - batch
 
-Route::get('create-batch',[TestController::class,'createBatch']);
 
 Route::get('do-awesome-service',[TestController::class,'doAwesome']);
 Route::get('test-service',[TestController::class,'testService']);
@@ -106,7 +104,6 @@ Route::get('/contacts/{id}', [ContactUsController::class, 'show']);  // Read (Si
 Route::delete('/contacts/{id}', [ContactUsController::class, 'destroy']);
 
 
-
 Route::middleware(['super.admin'])->group(function (){
 
     //====================== Super Admin Teacher ============================
@@ -123,6 +120,12 @@ Route::middleware(['super.admin'])->group(function (){
     //====================== Teachers Payment ====================================
     Route::post('add-teacher-salary',[CostController::class,'addTeacherSalary']);
 
+    //====================== batch ==================================
+    Route::resource('batches',RBatchController::class);
+
+    // =========================add module =============================
+    Route::post('add-module',[ModuleController::class,'addModule']);
+    Route::get('show-module',[ModuleController::class,'showModule']);
 });
 
 Route::middleware(['mentor','auth:api'])->group(function (){
@@ -131,7 +134,9 @@ Route::middleware(['mentor','auth:api'])->group(function (){
 
     Route::post('request-leave-application',[TeacherDashboardController::class,'requestLeaveApplication']);
     Route::get('show-leave-application',[TeacherDashboardController::class,'showLeaveRequest']);
-    Route::resource('routines',RoutineController::class)->except('create','edit');
+
 });
+
+Route::resource('routines',RoutineController::class)->except('create','edit');
 
 
