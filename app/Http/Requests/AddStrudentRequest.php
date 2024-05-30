@@ -12,7 +12,7 @@ class AddStrudentRequest extends FormRequest
     public function authorize(): bool
     {
         return true;
-    }
+    } 
 
     /**
      * Get the validation rules that apply to the request.
@@ -23,8 +23,7 @@ class AddStrudentRequest extends FormRequest
     {
         return [
             'category_id' => 'required',
-            'batch_id' => 'required',
-            'user_id' => 'required',
+            'batch_id' => 'required',           
             'course_id'=>'required',
             'phone' => 'required',
             'gender' => 'required',

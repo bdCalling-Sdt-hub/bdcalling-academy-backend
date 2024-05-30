@@ -15,47 +15,66 @@ use Carbon\Carbon;
 class AddStudentController extends Controller
 {
     public function addStudent(AddStrudentRequest $request)
-    {
-        $email = $request->email;
-        $random = Str::random(6);
-        $date = Carbon::now();
-        $check = User::where('email', $email)->first();
-        
-        if (!$check) {
-            $user = User::create([
-                'name' => $request->name,
-                'email' => $request->email,
-                'password' => Hash::make('123456789'),
-                'otp' => $random,
-                'email_verified_at' => $date
-            ]);
-    
-            Mail::to($email)->send(new SendOtp($random));
-    
-            $addStudent = AddStudent::create($request->validated());
-    
-            return response()->json([
-                'status' => 'success',
-                'message' => 'add student created successfully',
-                'data' => $addStudent,
-            ], 200);
-        } else {
-            // Assuming you want to update the existing AddStudent information
-            $addStudent = AddStudent::where('user_id', $check->id)->first();
-    
-            if ($addStudent) {
-                $addStudent->update($request->validated());
-            } else {
-                // If there's no existing AddStudent entry, create a new one
-                $addStudent = AddStudent::create($request->validated());
-            }
-    
-            return response()->json([
-                'status' => 'success',
-                'message' => 'User information updated successfully',
-                'data' => $addStudent,
-            ], 200);
-        }
+{
+    $email = $request->email;
+    $random = Str::random(6);
+    $date = Carbon::now();
+    $check = User::where('email', $email)->first();
+    $user = null;
+
+    if (!$check) {
+        // Create a new user
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make('123456789'),
+            'otp' => $random,
+            'email_verified_at' => $date
+        ]);
+
+        // Send OTP to the new user
+        Mail::to($email)->send(new SendOtp($random));
+
+        $userId = $user->id;
+    } else {
+        $userId = $check->id;
     }
+
+    // Check if the student record already exists
+    $addStudent = AddStudent::where('user_id', $userId)->first();
+
+    $studentData = [
+        'category_id' => $request->category_id,
+        'batch_id' => $request->batch_id,
+        'user_id' => $userId,
+        'course_id' => $request->course_id,
+        'phone' => $request->phone,
+        'gender' => $request->gender,
+        'riligion' => $request->riligion,
+        'registration_date' => $request->registration_date,
+        'dob' => $request->dob,
+        'blood_group' => $request->blood_group,
+        'address' => $request->address,
+        'add_by' => $request->add_by,
+        'student_type' => $request->student_type,
+    ];
+
+    if ($addStudent) {
+        // Update the existing student record
+        $addStudent->update($studentData);
+        $message = 'User information updated successfully';
+    } else {
+        // Create a new student record
+        $addStudent = AddStudent::create($studentData);
+        $message = 'Student added successfully';
+    }
+
+    return response()->json([
+        'status' => 'success',
+        'message' => $message,
+        'data' => $addStudent,
+    ], 200);
+}
+
     
 }
