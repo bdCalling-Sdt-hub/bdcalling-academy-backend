@@ -5,9 +5,6 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('add_students', function (Blueprint $table) {
@@ -15,7 +12,7 @@ return new class extends Migration {
             $table->integer('category_id')->nullable();
             $table->integer('batch_id')->nullable();
             $table->integer('user_id')->nullable();
-            $table->integer('course_id');            
+            $table->integer('course_id');
             $table->string('status')->default('pending');
             $table->string('phone');
             $table->string('gender');
