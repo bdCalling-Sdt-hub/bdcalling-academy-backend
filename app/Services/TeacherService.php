@@ -4,8 +4,6 @@ namespace App\Services;
 use App\Models\LeaveApplication;
 use App\Models\User;
 use App\Models\Teacher;
-use Carbon\Carbon;
-use http\Env\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;

@@ -46,14 +46,12 @@ class RTeacherController extends Controller
     }
     public function show(string $id)
     {
-        //
         $teachers = Teacher::with('user')->where('id',$id)->first();
         return response()->json(['message' => 'Teacher', 'teacher' => $teachers],200);
     }
 
     public function edit(string $id)
     {
-        //
 
     }
 

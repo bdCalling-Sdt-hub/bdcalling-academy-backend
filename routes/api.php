@@ -12,6 +12,7 @@ use App\Http\Controllers\Teacher\RTeacherController;
 use App\Http\Controllers\Teacher\TeacherDashboardController;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\AllStudentController;
+use App\Http\Controllers\Teacher\AttendanceController;
 
 use App\Http\Controllers\Api\Admin\AddStudentController;
 use App\Http\Controllers\Api\SuperAdmin\AboutController;
@@ -76,7 +77,6 @@ Route::get('/show/dropout/student', [DropoutStudentController::class, 'show_drop
 
 Route::post('/add/student', [AddStudentController::class, 'addStudent']);
 
-
 // ============ About ================//
 
 Route::get('/show/about', [AboutController::class, 'show_about']);
@@ -93,8 +93,6 @@ Route::resource('/assession', AssessionController::class);
 Route::resource('/success/story', successStoryController::class);
 Route::resource('/event', EventController::class);
 Route::resource('/gallery', GallerytController::class);
-
-
 
 // ==================== CONTACT US =====================//
 
@@ -125,18 +123,20 @@ Route::middleware(['super.admin'])->group(function (){
 
     // =========================add module =============================
     Route::post('add-module',[ModuleController::class,'addModule']);
+    Route::post('update-module/{id}',[ModuleController::class,'updateModule']);
+
     Route::get('show-module',[ModuleController::class,'showModule']);
 });
 
 Route::middleware(['mentor','auth:api'])->group(function (){
 
     //===================== Trainer Dashboard ================================
-
     Route::post('request-leave-application',[TeacherDashboardController::class,'requestLeaveApplication']);
     Route::get('show-leave-application',[TeacherDashboardController::class,'showLeaveRequest']);
-
 });
 
 Route::resource('routines',RoutineController::class)->except('create','edit');
 
 
+//==============================Attendance=====================================
+Route::resource('attendances',AttendanceController::class)->except('create','edit');
