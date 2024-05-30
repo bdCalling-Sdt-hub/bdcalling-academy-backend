@@ -9,7 +9,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Hash;
 use App\Mail\SendOtp;
-use Mail;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 class AddStudentController extends Controller
@@ -27,8 +27,9 @@ class AddStudentController extends Controller
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => Hash::make('123456789'),
+            'password' => Hash::make('1234567rr'),
             'otp' => $random,
+            'role' => 'STUDENT',
             'email_verified_at' => $date
         ]);
 
@@ -76,5 +77,5 @@ class AddStudentController extends Controller
     ], 200);
 }
 
-    
+
 }
