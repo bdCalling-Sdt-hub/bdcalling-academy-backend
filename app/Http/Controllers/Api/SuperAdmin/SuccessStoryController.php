@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\SuperAdmin;
 
 use App\Http\Controllers\Controller;
 use App\Models\SuccessStory;
+use App\Models\AddStudent;
 use Illuminate\Http\Request;
 
 class SuccessStoryController extends Controller
@@ -11,9 +12,35 @@ class SuccessStoryController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+         // Initialize the query builder for the AddStudent model and filter by status
+         $query = AddStudent::where('status', 'complet')
+         ->with(['user', 'batch', 'course']);
+
+        // Apply filters conditionally
+        if ($request->filled('date')) {
+        $query->where('dob', 'like', "%{$request->date}%");
+        }
+
+        // Using where and orWhere properly
+        if ($request->filled('id')) {
+        $query->where(function($q) use ($request) {
+            $q->where('id', 'like', "%{$request->id}%");
+        });
+        }
+
+        if ($request->filled('phone')) {
+        $query->where(function($q) use ($request) {
+            $q->where('phone', 'like', "%{$request->phone}%");
+        });
+        }
+
+        // Paginate the results
+        $students = $query->paginate(10);
+
+        // Return the paginated results
+        return response()->json($students);
     }
 
     /**
