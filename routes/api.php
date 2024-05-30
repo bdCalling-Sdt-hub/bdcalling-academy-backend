@@ -23,6 +23,10 @@ use App\Http\Controllers\Api\SuperAdmin\GallerytController;
 use App\Http\Controllers\Api\SuperAdmin\successStoryController;
 use App\Http\Controllers\Api\SuperAdmin\AdmittedController;
 use App\Http\Controllers\Api\SuperAdmin\DropoutStudentController;
+use App\Http\Controllers\Api\SuperAdmin\ReviewController;
+use App\Http\Controllers\Api\SuperAdmin\IncludeCostController;
+use App\Http\Controllers\Api\SuperAdmin\DashboardController;
+use App\Http\Controllers\Api\Student\StudentDashbordController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -57,6 +61,8 @@ Route::get('do-awesome-service',[TestController::class,'doAwesome']);
 Route::get('test-service',[TestController::class,'testService']);
 
 // ================SUPER ADMIN ===================//
+Route::get('/dashboard', [DashboardController::class, 'counting']);
+Route::get('/student-ratio', [DashboardController::class, 'averageMonthlyAdmissions']);
 
 Route::post('/privacy', [AboutController::class, 'privacyPolicy']);
 Route::get('/show/privacy', [AboutController::class, 'show_privacy']);
@@ -72,10 +78,19 @@ Route::post('/admit/payment', [AdmittedController::class, 'admittedPayment']);
 Route::get('/singel/addmit/student/{id}', [AdmittedController::class, 'singel_admitted_student']);
 Route::post('/dropout/addmit/student', [AdmittedController::class, 'dropout_student']);
 Route::get('/show/dropout/student', [DropoutStudentController::class, 'show_dropout_student']);
-//Route::post('/dropout/addmit/student', [AdmittedController::class, 'dropout_student']);
+Route::post('/refund', [DropoutStudentController::class, 'store_refund']);
+
 // ========================= Add student ============== //
 
 Route::post('/add/student', [AddStudentController::class, 'addStudent']);
+
+
+// ===================== Add Review ================= //
+
+Route::resource('reviews', ReviewController::class);
+
+// ===================== ADD INCLUDE COST ================= //
+Route::resource('/include/cost', IncludeCostController::class);
 
 // ============ About ================//
 
@@ -135,6 +150,10 @@ Route::middleware(['mentor','auth:api'])->group(function (){
     Route::get('show-leave-application',[TeacherDashboardController::class,'showLeaveRequest']);
 });
 
+Route::middleware(['student'])->group(function (){
+    Route::get('/all-course', [StudentDashbordController::class, 'all_course']);
+
+});
 Route::resource('routines',RoutineController::class)->except('create','edit');
 
 

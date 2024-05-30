@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class AddStrudentRequest extends FormRequest
+class ReviewRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -12,7 +12,7 @@ class AddStrudentRequest extends FormRequest
     public function authorize(): bool
     {
         return true;
-    } 
+    }
 
     /**
      * Get the validation rules that apply to the request.
@@ -22,18 +22,11 @@ class AddStrudentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'category_id' => 'required',
-            'batch_id' => 'required',           
+            'add_students_id'=>'required',
             'course_id'=>'required',
-            'phone' => 'required',
-            'gender' => 'required',
-            'riligion' => 'required',
-            'registration_date' => 'required',
-            'dob' => 'required',
-            'blood_group' => 'required',
-            'address' => 'required',
-            'add_by' => '',
-            'student_type' => 'required',
+            'batch_id'=>'required',
+            'rating_value'=>'required',
+            'message'=>'required',
         ];
     }
 }
