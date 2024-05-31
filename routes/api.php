@@ -26,6 +26,7 @@ use App\Http\Controllers\Api\SuperAdmin\ReviewController;
 use App\Http\Controllers\Api\SuperAdmin\IncludeCostController;
 use App\Http\Controllers\Api\SuperAdmin\DashboardController;
 use App\Http\Controllers\Api\Student\StudentDashbordController;
+use App\Http\Controllers\Api\Student\QuizeController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -139,6 +140,11 @@ Route::middleware(['super.admin'])->group(function (){
     // =========================add module =============================
     Route::post('add-module',[ModuleController::class,'addModule']);
     Route::get('show-module',[ModuleController::class,'showModule']);
+
+    //==================== Quize ==============================//
+
+    Route::resource('quize',QuizeController::class);
+    
 });
 
 Route::middleware(['mentor','auth:api'])->group(function (){
@@ -151,8 +157,11 @@ Route::middleware(['mentor','auth:api'])->group(function (){
 });
 
 Route::middleware(['student'])->group(function (){
+    Route::get('/student-counting', [StudentDashbordController::class, 'counting_student_info']);
     Route::get('/all-course', [StudentDashbordController::class, 'all_course']);
-
+    Route::get('/course-modul-video/{id}', [StudentDashbordController::class, 'course_modul_video']);
+    Route::get('/show-quize-student/{id}', [StudentDashbordController::class, 'show_quize']);
+    
 });
 Route::resource('routines',RoutineController::class)->except('create','edit');
 
