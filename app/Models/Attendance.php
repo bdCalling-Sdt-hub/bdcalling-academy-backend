@@ -11,5 +11,9 @@ class Attendance extends Model
 
     protected $fillable = [
         'batch_id',
+        'add_student_id',
+        'date',
+        'attendance_by',
+        'is_present',
     ];
 }

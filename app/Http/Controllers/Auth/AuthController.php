@@ -35,7 +35,6 @@ class AuthController extends Controller
             Mail::to($request->email)->send(new SendOtp($random));
             $user->update(['otp' => $random]);
             $user->email_verified_at = new Carbon();
-//            $user->update(['email_verified_at' => null]);
 
             return response(['message' => 'Please check your email for validate your email.'], 200);
         } else {
