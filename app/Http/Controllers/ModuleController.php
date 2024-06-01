@@ -130,12 +130,6 @@ class ModuleController extends Controller
     public function showModule()
     {
         $course_list_with_module = Course::with('course_module.videos')->paginate(9);
-//        $formatted_course_list = $course_list_with_module->map(function ($course){
-//            foreach ($course->course_module as $module) {
-//                $module->module_class = json_decode($module->module_class);
-//            }
-//            return $course;
-//        });
         return dataResponse(200, 'Course With Module List', $course_list_with_module);
     }
 
