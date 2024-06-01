@@ -7,12 +7,15 @@ use App\Models\AddStudent;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Quize;
-
+use App\Models\Anseware;
+use App\Models\Attendance;
 class StudentDashbordController extends Controller
 {
     public function counting_student_info()
     {
          $auth = auth()->user()->id;
+         $check_student = AddStudent::where('user_id', $auth)->pluck('id');        
+         $complete_class = Attendance::whereIn('add_students_id', $check_student)->count();
          $complete_course = AddStudent::where('user_id',$auth)->where('status','complet')->count();
          $payment =  Order::where('user_id',$auth)->sum('amount');
          $course_fee = Order::where('user_id',$auth)->sum('course_fee');
@@ -23,6 +26,7 @@ class StudentDashbordController extends Controller
             'complet_course'=>$complete_course,
             'total_payment'=>$payment,
             'total_due'=>$due,
+            'complite_class'=>$complete_class,
         ], 200);
     }
 
@@ -50,7 +54,35 @@ class StudentDashbordController extends Controller
 
     public function show_quize($id)
     {
-        return $show_quize_test = Quize::where('course_module_id', $id)->get();
+         $show_quize_test = Quize::where('course_module_id', $id)->get();
+         if($show_quize_test){
+            return response()->json(['status'=>'success','data'=>$show_quize_test],200);
+         }else{
+            return response()->json(['status'=>false,'message'=>'Record not found'],400); 
+         }
+    }
+
+    public function exam_test_ans(Request $request)
+    {
+        $auth = auth()->user()->id;
+        $course_module_id = $request->course_module_id;
+        $check = Anseware::where('user_id', $auth)->where('course_module_id', $course_module_id)->first();
+        if(! $check){
+            $exam = new Anseware();
+            $exam->user_id = $auth;
+            $exam->course_module_id = $request->course_module_id;
+            $exam->mark = $request->mark;
+            $exam->status= $request->status;
+            $exam->save();
+            if($exam){
+                return response()->json(['status'=>'success','data'=>$exam],200);
+            }else{
+                return response()->json(['status'=>false,'message'=>'Internall server error'],400);  
+            }
+        }else{
+            return response()->json(['status'=>false,'message'=>'All ready examination complet'],400); 
+        }
+        
     }
 
     

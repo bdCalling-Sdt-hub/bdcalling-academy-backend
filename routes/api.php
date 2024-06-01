@@ -75,7 +75,7 @@ Route::get('/show/auth/student', [AllStudentController::class, 'auth_type_studen
 Route::get('/show/techer/student', [AllStudentController::class, 'teacher_type_student']);
 Route::get('/student/details/{id}', [AllStudentController::class, 'student_details']);
 Route::get('/student/delete/{id}', [AllStudentController::class, 'destroy']);
-Route::post('/admit', [AllStudentController::class, 'addmitStudent']);
+Route::post('/update/admit', [AllStudentController::class, 'updateStudent']);
 Route::get('/admitted/student', [AdmittedController::class, 'admittedStudent']);
 Route::post('/admit/payment', [AdmittedController::class, 'admittedPayment']);
 Route::get('/singel/addmit/student/{id}', [AdmittedController::class, 'singel_admitted_student']);
@@ -163,6 +163,7 @@ Route::middleware(['student'])->group(function (){
     Route::get('/all-course', [StudentDashbordController::class, 'all_course']);
     Route::get('/course-modul-video/{id}', [StudentDashbordController::class, 'course_modul_video']);
     Route::get('/show-quize-student/{id}', [StudentDashbordController::class, 'show_quize']);
+    Route::post('/examination-test', [StudentDashbordController::class, 'exam_test_ans']);
     
 });
 Route::resource('routines',RoutineController::class)->except('create','edit');
