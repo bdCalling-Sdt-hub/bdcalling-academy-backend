@@ -51,12 +51,7 @@ class TeacherPaymentController extends Controller
     public function teacherPaymentUpdate(Request $request, string $id)
     {
         try {
-            // Find the payment by ID
             $payment = Payment::findOrFail($id);
-
-            // Update the payment attributes
-//            $payment->teacher_id = $payment->teacher_id;
-//            $payment->course_module_id = $request->course_module_id;
             $payment->payment_type = $request->payment_type;
             $payment->amount = $request->amount;
             $payment->payment_date = $request->payment_date;
@@ -91,4 +86,33 @@ class TeacherPaymentController extends Controller
             ], 500);
         }
     }
+
+    public function showAllTransactionByTeacher(Request $request)
+    {
+        $query = Payment::with('teacher.user');
+
+        // Filter by date
+        if ($request->filled('payment_date')) {
+            $query->where('payment_date', $request->payment_date);
+        }
+
+        // Filter by teacher's phone number
+        if ($request->filled('phone_number')) {
+            $query->whereHas('teacher', function($q) use ($request) {
+                $q->where('phone_number', $request->phone_number);
+            });
+        }
+
+        // Filter by teacher's designation
+        if ($request->filled('designation')) {
+            $query->whereHas('teacher', function($q) use ($request) {
+                $q->where('designation', $request->designation);
+            });
+        }
+
+        $payments = $query->paginate(9);
+
+        return response()->json($payments);
+    }
+
 }

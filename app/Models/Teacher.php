@@ -28,6 +28,4 @@ class Teacher extends Model
     {
         return $this->hasMany(LeaveApplication::class);
     }
-
-
 }

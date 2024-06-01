@@ -48,6 +48,7 @@ Route::group([
     Route::post('/resend-otp', [AuthController::class, 'resendOtp']);
 });
 
+
 Route::resource('categories',RCategoryController::class)->except('create','edit');
 Route::resource('courses',RCourseController::class)->except('create','edit');
 
@@ -85,7 +86,6 @@ Route::post('/refund', [DropoutStudentController::class, 'store_refund']);
 
 Route::post('/add/student', [AddStudentController::class, 'addStudent']);
 
-
 // ===================== Add Review ================= //
 
 Route::resource('reviews', ReviewController::class);
@@ -96,6 +96,7 @@ Route::resource('/include/cost', IncludeCostController::class);
 // ============ About ================//
 
 Route::get('/show/about', [AboutController::class, 'show_about']);
+
 Route::post('/update/about', [AboutController::class, 'updateAbout']);
 
 // ============ Terms ================//
@@ -165,3 +166,4 @@ Route::resource('attendances',AttendanceController::class)->except('create','edi
 //============================== Teachers Payment ========================================================
 Route::post('/teacher-payments',[TeacherPaymentController::class,'teacherPayment']);
 Route::post('/teacher-payments-update/{id}',[TeacherPaymentController::class,'teacherPaymentUpdate']);
+Route::get('/show-transactions',[TeacherPaymentController::class,'showAllTransactionByTeacher']);
