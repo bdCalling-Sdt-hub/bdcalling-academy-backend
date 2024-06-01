@@ -97,25 +97,25 @@ class TeacherService
         $query = LeaveApplication::with('user.teacher');
 
         // Apply filters
-        if ($request->has('name')) {
+        if ($request->filled('name')) {
             $query->whereHas('user.teacher', function($q) use ($request) {
                 $q->where('name', 'like', '%' . $request->input('name') . '%');
             });
         }
 
-        if ($request->has('phone_number')) {
+        if ($request->filled('phone_number')) {
             $query->whereHas('user.teacher', function($q) use ($request) {
                 $q->where('phone_number', 'like', '%' . $request->input('phone_number') . '%');
             });
         }
 
-        if ($request->has('designation')) {
+        if ($request->filled('designation')) {
             $query->whereHas('user.teacher', function($q) use ($request) {
                 $q->where('designation', 'like', '%' . $request->input('designation') . '%');
             });
         }
 
-        if ($request->has('leave_status')) {
+        if ($request->filled('leave_status')) {
             $query->where('leave_status', 'like','%'  . $request->input('leave_status') . '%' );
         }
         return $query->paginate(9);

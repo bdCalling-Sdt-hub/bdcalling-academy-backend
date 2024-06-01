@@ -10,6 +10,7 @@ use App\Http\Controllers\RCourseController;
 use App\Http\Controllers\Teacher\RoutineController;
 use App\Http\Controllers\Teacher\RTeacherController;
 use App\Http\Controllers\Teacher\TeacherDashboardController;
+use App\Http\Controllers\Teacher\TeacherPaymentController;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\AllStudentController;
 use App\Http\Controllers\Teacher\AttendanceController;
@@ -48,6 +49,7 @@ Route::group([
     Route::post('/resend-otp', [AuthController::class, 'resendOtp']);
 });
 
+
 Route::resource('categories',RCategoryController::class)->except('create','edit');
 Route::resource('courses',RCourseController::class)->except('create','edit');
 
@@ -85,7 +87,6 @@ Route::post('/refund', [DropoutStudentController::class, 'store_refund']);
 
 Route::post('/add/student', [AddStudentController::class, 'addStudent']);
 
-
 // ===================== Add Review ================= //
 
 Route::resource('reviews', ReviewController::class);
@@ -96,6 +97,7 @@ Route::resource('/include/cost', IncludeCostController::class);
 // ============ About ================//
 
 Route::get('/show/about', [AboutController::class, 'show_about']);
+
 Route::post('/update/about', [AboutController::class, 'updateAbout']);
 
 // ============ Terms ================//
@@ -168,3 +170,9 @@ Route::resource('routines',RoutineController::class)->except('create','edit');
 
 //==============================Attendance=====================================
 Route::resource('attendances',AttendanceController::class)->except('create','edit');
+
+
+//============================== Teachers Payment ========================================================
+Route::post('/teacher-payments',[TeacherPaymentController::class,'teacherPayment']);
+Route::post('/teacher-payments-update/{id}',[TeacherPaymentController::class,'teacherPaymentUpdate']);
+Route::get('/show-transactions',[TeacherPaymentController::class,'showAllTransactionByTeacher']);

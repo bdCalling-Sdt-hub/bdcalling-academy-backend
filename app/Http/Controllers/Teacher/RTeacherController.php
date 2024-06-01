@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Teacher;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\TeacherRequest;
-use App\Models\LeaveApplication;
 use App\Models\Teacher;
 use App\Services\TeacherService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
