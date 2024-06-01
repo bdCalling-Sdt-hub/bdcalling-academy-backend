@@ -10,6 +10,7 @@ use App\Http\Controllers\RCourseController;
 use App\Http\Controllers\Teacher\RoutineController;
 use App\Http\Controllers\Teacher\RTeacherController;
 use App\Http\Controllers\Teacher\TeacherDashboardController;
+use App\Http\Controllers\Teacher\TeacherPaymentController;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\AllStudentController;
 use App\Http\Controllers\Teacher\AttendanceController;
@@ -159,3 +160,8 @@ Route::resource('routines',RoutineController::class)->except('create','edit');
 
 //==============================Attendance=====================================
 Route::resource('attendances',AttendanceController::class)->except('create','edit');
+
+
+//============================== Teachers Payment ========================================================
+Route::post('/teacher-payments',[TeacherPaymentController::class,'teacherPayment']);
+Route::post('/teacher-payments-update/{id}',[TeacherPaymentController::class,'teacherPaymentUpdate']);

@@ -41,11 +41,8 @@ class AttendanceController extends Controller
                 ]
             );
         }
-
         return response()->json(['message' => 'Attendance recorded successfully']);
     }
-
-
 
     public function show(string $id)
     {
