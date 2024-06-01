@@ -13,11 +13,10 @@ return new class extends Migration
     {
         Schema::create('anseware', function (Blueprint $table) {
             $table->id();
-            $table->integer('user_id');
-            $table->integer('quize_id');
-            $table->integer('course_module_id');
-            $table->string('answare');
+            $table->integer('user_id');            
+            $table->integer('course_module_id');          
             $table->integer('mark');
+            $table->string('status')->nullable();
             $table->timestamps();
         });
     }

@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('attendances', function (Blueprint $table) {
             $table->id();
             $table->foreignId('batch_id');
-            $table->foreignId('student_id')->constrained()->onDelete('cascade');
+            $table->foreignId('add_students_id')->constrained()->onDelete('cascade');
             $table->date('date');
             $table->boolean('is_present');
             $table->string('attendance_by')->nullable();

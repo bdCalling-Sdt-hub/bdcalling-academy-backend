@@ -129,7 +129,7 @@ class AllStudentController extends Controller
         }
     }
 
-    public function addmitStudent(Request $request)
+    public function updateStudent(Request $request)
     {
         $admit_student = AddStudent::find($request->id);
         $admit_student->category_id = $request->category_id ?? $admit_student->category_id;

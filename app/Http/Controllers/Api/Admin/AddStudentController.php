@@ -17,6 +17,8 @@ class AddStudentController extends Controller
     public function addStudent(AddStrudentRequest $request)
 {
     $email = $request->email;
+    $courseId = $request->course_id;
+    $batchId = $request->batch_id;
     $random = Str::random(6);
     $date = Carbon::now();
     $check = User::where('email', $email)->first();
@@ -41,7 +43,7 @@ class AddStudentController extends Controller
     }
 
     // Check if the student record already exists
-    $addStudent = AddStudent::where('user_id', $userId)->first();
+    $addStudent = AddStudent::where('user_id', $userId)->where('course_id', $courseId)->where('batch_id', $batchId )->first();
 
     $studentData = [
         'category_id' => $request->category_id,
