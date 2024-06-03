@@ -8,6 +8,8 @@ use App\Http\Controllers\ModuleController;
 use App\Http\Controllers\RBatchController;
 use App\Http\Controllers\RCategoryController;
 use App\Http\Controllers\RCourseController;
+use App\Http\Controllers\Student\AdmitController;
+use App\Http\Controllers\Student\StudentController;
 use App\Http\Controllers\Teacher\RoutineController;
 use App\Http\Controllers\Teacher\RTeacherController;
 use App\Http\Controllers\Teacher\TeacherDashboardController;
@@ -182,3 +184,10 @@ Route::get('/show-transactions',[TeacherPaymentController::class,'showAllTransac
 
 //==============================Sync Batch======================================
 Route::post('/batch-teachers',[BatchSyncController::class,'syncBatch']);
+
+
+//============================= Student =====================================
+Route::resource('/students',StudentController::class)->except('create','edit');
+
+
+Route::post('/admit-student',[AdmitController::class,'admitStudent']);

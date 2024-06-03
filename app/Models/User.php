@@ -59,5 +59,10 @@ class User extends Authenticatable implements JWTSubject
         return $this->belongsToMany(Batch::class, 'batch_teachers', 'user_id', 'batch_id');
     }
 
+    public function student():HasOne
+    {
+        return $this->hasOne(Student::class);
+    }
+
 
 }
