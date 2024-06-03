@@ -2,10 +2,8 @@
 
 namespace App\Http\Controllers\Auth;
 
-//use App\Events\SendNotificationEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
-use App\Http\Requests\RegisterRequest;
 use App\Mail\SendOtp;
 use App\Models\User;
 use Carbon\Carbon;
