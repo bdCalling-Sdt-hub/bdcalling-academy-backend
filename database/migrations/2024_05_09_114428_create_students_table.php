@@ -6,13 +6,22 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('students', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('category_id');
+            $table->foreignId('user_id')->nullable()->constrained()->onDelete('cascade');
+            $table->string('status')->default('pending');
+            $table->string('phone_number')->nullable();
+            $table->string('gender')->nullable();
+            $table->text('religion')->nullable();
+            $table->date('registration_date')->nullable();
+            $table->date('dob')->nullable();
+            $table->string('blood_group')->nullable();
+            $table->text('address')->nullable();
+            $table->string('add_by')->nullable();
+            $table->string('student_type')->nullable();
             $table->timestamps();
         });
     }
