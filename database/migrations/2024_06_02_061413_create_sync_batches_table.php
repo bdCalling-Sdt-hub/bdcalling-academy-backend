@@ -6,13 +6,15 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
-        Schema::create('batches', function (Blueprint $table) {
+        Schema::create('sync_batches', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('course_id');
-            $table->string('batch_id');
-            $table->string('batch_name')->nullable();
+            $table->foreignId('batch_id')->constrained()->onDelete('cascade');
+            $table->foreignId('course_id')->constrained()->onDelete('cascade');
             $table->date('start_date');
             $table->date('end_date');
             $table->integer('seat_limit');
@@ -22,8 +24,12 @@ return new class extends Migration
             $table->timestamps();
         });
     }
+
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
-        Schema::dropIfExists('batches');
+        Schema::dropIfExists('sync_batches');
     }
 };

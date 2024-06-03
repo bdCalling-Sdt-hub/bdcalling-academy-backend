@@ -6,9 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('teachers', function (Blueprint $table) {
@@ -18,6 +15,7 @@ return new class extends Migration
             $table->string('phone_number');
             $table->string('designation');
             $table->string('expert');
+            $table->text('image')->nullable();
             $table->string('created_by')->nullable();
             $table->string('status')->nullable();
             $table->timestamps();

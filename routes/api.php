@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AddEmployeeController;
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Batch\BatchSyncController;
 use App\Http\Controllers\Calculation\CostController;
 use App\Http\Controllers\ModuleController;
 use App\Http\Controllers\RBatchController;
@@ -148,7 +149,7 @@ Route::middleware(['super.admin'])->group(function (){
     //==================== Quize ==============================//
 
     Route::resource('quize',QuizeController::class);
-    
+
 });
 
 Route::middleware(['mentor','auth:api'])->group(function (){
@@ -164,7 +165,7 @@ Route::middleware(['student'])->group(function (){
     Route::get('/course-modul-video/{id}', [StudentDashbordController::class, 'course_modul_video']);
     Route::get('/show-quize-student/{id}', [StudentDashbordController::class, 'show_quize']);
     Route::post('/examination-test', [StudentDashbordController::class, 'exam_test_ans']);
-    
+
 });
 Route::resource('routines',RoutineController::class)->except('create','edit');
 
@@ -177,3 +178,7 @@ Route::resource('attendances',AttendanceController::class)->except('create','edi
 Route::post('/teacher-payments',[TeacherPaymentController::class,'teacherPayment']);
 Route::post('/teacher-payments-update/{id}',[TeacherPaymentController::class,'teacherPaymentUpdate']);
 Route::get('/show-transactions',[TeacherPaymentController::class,'showAllTransactionByTeacher']);
+
+
+//==============================Sync Batch======================================
+Route::post('/batch-teachers',[BatchSyncController::class,'syncBatch']);
