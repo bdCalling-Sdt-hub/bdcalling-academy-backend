@@ -10,8 +10,8 @@ return new class extends Migration
     {
         Schema::create('students', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('category_id');
-            $table->foreignId('user_id')->nullable()->constrained()->onDelete('cascade');
+            $table->foreignId('category_id')->nullable();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('status')->default('pending');
             $table->string('phone_number')->nullable();
             $table->string('gender')->nullable();
@@ -22,6 +22,7 @@ return new class extends Migration
             $table->text('address')->nullable();
             $table->string('add_by')->nullable();
             $table->string('student_type')->nullable();
+            $table->string('image')->nullable();
             $table->timestamps();
         });
     }

@@ -4,21 +4,29 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Order extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'user_id',
-        'add_student_id',
+        'student_id',
         'batch_id',
-        'course_id',
         'gateway_name',
         'amount',
         'transaction_id',
-        'currency',
-       
-        
+        'payment_type',
     ];
+
+    public function student():BelongsTo
+    {
+        return $this->belongsTo(Student::class);
+    }
+
+    public function batch():BelongsTo
+    {
+        return $this->belongsTo(Batch::class);
+    }
 }

@@ -10,6 +10,7 @@ use App\Http\Controllers\RCategoryController;
 use App\Http\Controllers\RCourseController;
 use App\Http\Controllers\Student\AdmitController;
 use App\Http\Controllers\Student\StudentController;
+use App\Http\Controllers\Student\StudentPaymentController;
 use App\Http\Controllers\Teacher\RoutineController;
 use App\Http\Controllers\Teacher\RTeacherController;
 use App\Http\Controllers\Teacher\TeacherDashboardController;
@@ -41,7 +42,7 @@ Route::group([
     ['middleware' => 'auth:api']
 ], function ($router) {
     Route::post('/register', [AuthController::class, 'register']);
-    Route::post('/email-verified', [AuthController::class, 'emailVerified']);
+    Route::get('/email-verified/{token}', [AuthController::class, 'emailVerified'])->name('verify.email');
     Route::post('/login', [AuthController::class, 'login']);
     Route::get('/profile', [AuthController::class, 'loggedUserData']);
     Route::post('/forget-pass', [AuthController::class, 'forgetPassword']);
@@ -133,8 +134,9 @@ Route::middleware(['super.admin'])->group(function (){
     Route::get('reject-leave-application',[RTeacherController::class,'rejectLeaveRequest']);
 
 
-    //====================== Manage Admins ====================================
+    //====================== Manage Admins / Super admins ====================================
     Route::resource('admins',AddEmployeeController::class)->except('create','edit');
+    Route::get('show-super-admin',[AddEmployeeController::class,'showSuperAdmin']);
 
     //====================== Teachers Payment ====================================
     Route::post('add-teacher-salary',[CostController::class,'addTeacherSalary']);
@@ -191,3 +193,9 @@ Route::resource('/students',StudentController::class)->except('create','edit');
 
 
 Route::post('/admit-student',[AdmitController::class,'admitStudent']);
+Route::get('/show-admit-student',[AdmitController::class,'showAdmitStudent']);
+
+//=================================Student Payment======================================
+Route::post('/student-payment',[StudentPaymentController::class,'admittedPayment']);
+Route::get('/show-student-payment',[StudentPaymentController::class,'showSingleStudentPaymentHistory']);
+

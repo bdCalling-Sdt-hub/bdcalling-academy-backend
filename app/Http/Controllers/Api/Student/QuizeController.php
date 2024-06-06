@@ -13,13 +13,13 @@ class QuizeController extends Controller
      */
     public function index()
     {
-        
+
         $quizes = Quize::all();
         if($quizes){
             return response()->json(['data'=>$quizes],200);
         }
         return response()->json(['Record not found'],402);
-        
+
     }
 
     /**
@@ -45,29 +45,20 @@ class QuizeController extends Controller
         return response()->json(['message' => 'Record not created'], 500); // 500 for server error
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
         $quize = Quize::findOrFail($id);
         if($quize){
             return response()->json(['data'=>$quize],200);
         }
-        return response()->json(['Record not found'],402);       
+        return response()->json(['Record not found'],402);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(string $id)
     {
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(QuizeRequest $request, string $id)
     {
         $update_quize = Quize::find($request->id);
@@ -96,7 +87,7 @@ class QuizeController extends Controller
 
        if($quize){
         return response()->json(['message'=>'Quize delete successfully'], 200);
-       } 
+       }
        return response()->json(['message'=>'Quize deleted faile'], 402);
     }
 }

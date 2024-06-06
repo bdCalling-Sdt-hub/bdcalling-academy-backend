@@ -34,7 +34,7 @@ class RTeacherController extends Controller
     public function store(TeacherRequest $request): JsonResponse
     {
         try {
-            $teacher = $this->teacherService->createTeacher($request->validated());
+            $teacher = $this->teacherService->createTeacher($request);
 
             return response()->json(['message' => 'Teacher added successfully', 'teacher' => $teacher], 201);
 
@@ -59,13 +59,11 @@ class RTeacherController extends Controller
         try {
             $data = $request->all();
 
-            // Pass the file directly if it exists
             if ($request->hasFile('image')) {
                 $data['image'] = $request->file('image');
             }
 
-            $teacher = $this->teacherService->updateTeacher($data, $id);
-//            $teacher = $this->teacherService->updateTeacher($request->all(), $id);
+            $teacher = $this->teacherService->updateTeacher($request, $id);
             return response()->json(['message' => 'Teacher updated successfully', 'teacher' => $teacher], 200);
 
         } catch (ModelNotFoundException $e) {
