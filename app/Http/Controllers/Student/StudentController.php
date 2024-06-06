@@ -73,10 +73,15 @@ class StudentController extends Controller
             $student->address = $request->address;
             $student->add_by = $request->add_by;
             $student->student_type = $request->student_type;
+            if ($request->file('image')) {
+                if (!empty($student->image)) {
+                    removeImage($student->image);
+                }
+                $student->image = saveImage($request,'image');
+            }
             $student->save();
 
             DB::commit();
-
             return response()->json(['message' => 'Student added successfully','data' => $student], 200);
         } catch (\Exception $e) {
             DB::rollback();
@@ -91,11 +96,67 @@ class StudentController extends Controller
 
     public function update(Request $request, string $id)
     {
+        DB::beginTransaction();
+        try {
+            $student = Student::findOrFail($id);
+            $user = User::findOrFail($student->user_id);
 
+            $user->name = $request->name ?? $user->name;
+            $user->email = $request->email ?? $user->email;
+            if ($request->password) {
+                $user->password = Hash::make($request->password);
+            }
+            $user->save();
+
+            $student->category_id = $request->category_id ?? $student->category_id;
+            $student->phone_number = $request->phone_number ?? $student->phone_number;
+            $student->gender = $request->gender ?? $student->gender;
+            $student->religion = $request->religion ?? $student->religion;
+            $student->registration_date = $request->registration_date ?? $student->registration_date ;
+            $student->dob = $request->dob ?? $student->dob;
+            $student->blood_group = $request->blood_group ?? $student->blood_group;
+            $student->address = $request->address ?? $student->address;
+            $student->add_by = $request->add_by ?? $student->add_by;
+            $student->student_type = $request->student_type ?? $student->add_by;
+
+            if ($request->file('image')) {
+                if (!empty($student->image)) {
+                    removeImage($student->image);
+                }
+                $student->image = saveImage($request, 'image');
+            }
+
+            $student->save();
+
+            DB::commit();
+            return response()->json(['message' => 'Student updated successfully', 'data' => $student], 200);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json(['message' => 'Failed to update student', 'error' => $e->getMessage()], 500);
+        }
     }
 
     public function destroy(string $id)
     {
+        DB::beginTransaction();
+        try {
+            $student = Student::findOrFail($id);
 
+            $user = User::findOrFail($student->user_id);
+
+            if (!empty($student->image)) {
+                removeImage($student->image);
+            }
+            $student->delete();
+
+            $user->delete();
+
+            DB::commit();
+            return response()->json(['message' => 'Student and associated user deleted successfully'], 200);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json(['message' => 'Failed to delete student', 'error' => $e->getMessage()], 500);
+        }
     }
+
 }

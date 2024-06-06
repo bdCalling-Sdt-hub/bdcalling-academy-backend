@@ -13,20 +13,22 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->integer('user_id');
-            $table->integer('add_student_id');
-            $table->integer('batch_id');
-            $table->integer('course_id');
+//            $table->integer('user_id');
+            $table->foreignId('student_id');
+            $table->foreignId('batch_id');
+//            $table->integer('course_id');
             $table->string('course_fee');
             $table->string('discount_price')->nullable();
-            $table->string('price');                        
+            $table->string('price');
             $table->string('amount');
             $table->string('due');
-            $table->string('discount_referance')->nullable();
-            $table->string('gateway_name');            
-            $table->string('transaction_id');
-            $table->string('currency');
-            $table->string('status');
+            $table->string('discount_reference')->nullable();
+            $table->string('gateway_name');
+            $table->json('installment_date')->nullable();
+            $table->string('payment_type');
+            $table->string('transaction_id')->nullable();
+            $table->string('currency')->default('BDT');
+            $table->string('status')->nullable();
             $table->timestamps();
         });
     }

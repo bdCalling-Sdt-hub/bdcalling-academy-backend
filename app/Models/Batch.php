@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Routing\Route;
 
 class Batch extends Model
@@ -55,6 +56,11 @@ class Batch extends Model
 
     public function students():BelongsToMany
     {
-        return $this->belongsToMany(AddStudent::class,'batch_students','batch_id','student_id');
+        return $this->belongsToMany(Student::class,'batch_students','batch_id','student_id');
+    }
+
+    public function student():HasOne
+    {
+        return $this->hasOne(Student::class);
     }
 }
