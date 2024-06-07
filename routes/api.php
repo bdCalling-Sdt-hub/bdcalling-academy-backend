@@ -24,6 +24,7 @@ use App\Http\Controllers\Api\SuperAdmin\GallerytController;
 use App\Http\Controllers\Api\SuperAdmin\successStoryController;
 use App\Http\Controllers\Api\SuperAdmin\AdmittedController;
 use App\Http\Controllers\Api\SuperAdmin\DropoutStudentController;
+use App\Http\Controllers\Api\SuperAdmin\SendSMScontroller;
 use App\Http\Controllers\Api\SuperAdmin\ReviewController;
 use App\Http\Controllers\Api\SuperAdmin\IncludeCostController;
 use App\Http\Controllers\Api\SuperAdmin\DashboardController;
@@ -177,3 +178,6 @@ Route::resource('attendances',AttendanceController::class)->except('create','edi
 Route::post('/teacher-payments',[TeacherPaymentController::class,'teacherPayment']);
 Route::post('/teacher-payments-update/{id}',[TeacherPaymentController::class,'teacherPaymentUpdate']);
 Route::get('/show-transactions',[TeacherPaymentController::class,'showAllTransactionByTeacher']);
+
+
+Route::post('/send-sms',[SendSMScontroller::class,'send_sms']);
