@@ -28,6 +28,7 @@ use App\Http\Controllers\Api\SuperAdmin\GallerytController;
 use App\Http\Controllers\Api\SuperAdmin\successStoryController;
 use App\Http\Controllers\Api\SuperAdmin\AdmittedController;
 use App\Http\Controllers\Api\SuperAdmin\DropoutStudentController;
+use App\Http\Controllers\Api\SuperAdmin\SendSMScontroller;
 use App\Http\Controllers\Api\SuperAdmin\ReviewController;
 use App\Http\Controllers\Api\SuperAdmin\IncludeCostController;
 use App\Http\Controllers\Api\SuperAdmin\DashboardController;
@@ -184,6 +185,9 @@ Route::post('/teacher-payments-update/{id}',[TeacherPaymentController::class,'te
 Route::get('/show-transactions',[TeacherPaymentController::class,'showAllTransactionByTeacher']);
 
 
+
+Route::post('/send-sms',[SendSMScontroller::class,'send_sms']);
+=======
 //==============================Sync Batch======================================
 Route::post('/batch-teachers',[BatchSyncController::class,'syncBatch']);
 
@@ -198,4 +202,5 @@ Route::get('/show-admit-student',[AdmitController::class,'showAdmitStudent']);
 //=================================Student Payment======================================
 Route::post('/student-payment',[StudentPaymentController::class,'admittedPayment']);
 Route::get('/show-student-payment',[StudentPaymentController::class,'showSingleStudentPaymentHistory']);
+
 
