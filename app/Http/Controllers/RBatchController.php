@@ -4,15 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\BatchRequest;
 use App\Models\Batch;
+use App\Models\BatchTeacher;
 use App\Models\Course;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class RBatchController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Batch::query();
+        $query = Batch::with('teachers.user');
         if ($request->has('batch_name')) {
             $query->where('batch_name', 'like', '%' . $request->input('batch_name') . '%');
         }
@@ -22,11 +24,11 @@ class RBatchController extends Controller
 
     public function store(BatchRequest $request)
     {
+        DB::beginTransaction();
         try {
             $course_id = $request->course_id;
-            $batch_type = $request->batch_type;
-
-            $course = Course::find($course_id);
+            $course = Course::where('id',$course_id)->first();
+            $batch_type = $course->course_type;
             if (!$course) {
                 return response()->json([
                     'message' => 'Course does not exist',
@@ -37,8 +39,23 @@ class RBatchController extends Controller
             $batch->batch_id = $this->createBatch($course_id, $batch_type);
             $batch->course_id = $course_id;
             $batch->batch_name = $request->batch_name ?? null;
-            $batch->batch_type = $batch_type;
+            $batch->start_date = $request->start_date;
+            $batch->end_date = $request->end_date ;
+            $batch->seat_limit = $request->seat_limit ;
+            $batch->seat_left = $request->seat_left ;
+            $batch->image = saveImage($request,'image');
+            $batch->discount_price = $request->discount_price ?? null;
             $batch->save();
+
+            $teacher_ids = json_decode($request->teacher_id,true);
+
+            foreach ($teacher_ids as $index => $teacher_id) {
+                $teacher_batch = new BatchTeacher();
+                $teacher_batch->batch_id = $batch->id;
+                $teacher_batch->teacher_id = $teacher_id;
+                $teacher_batch->save();
+            }
+            DB::commit();
 
             return response()->json([
                 'message' => 'Batch created successfully',
@@ -100,31 +117,43 @@ class RBatchController extends Controller
         }
     }
 
-    public function update(BatchRequest $request, $id)
+    public function update(Request $request, $id)
     {
         try {
-            $course_id = $request->course_id;
-            $course = Course::find($course_id);
-            if (!$course) {
-                return response()->json([
-                    'message' => 'Course does not exist',
-                ], 404);
-            }
-
             $batch = Batch::find($id);
+
             if (!$batch) {
                 return response()->json([
                     'message' => 'Batch not found',
                 ], 404);
             }
 
-            // Update batch details
-            $batch_type = $request->batch_type;
-            $batch->batch_id = $this->createBatch($course_id, $batch_type);
-            $batch->course_id = $course_id;
-            $batch->batch_name = $request->batch_name;
-            $batch->batch_type = $batch_type;
-            $batch->save();
+            //$batch->batch_id = $this->createBatch($course_id, $batch_type);
+            //$batch->course_id = $course_id;
+            $batch->batch_name = $request->batch_name ?? $batch->batch_name;
+            $batch->start_date = $request->start_date ?? $batch->start_date;
+            $batch->end_date = $request->end_date ?? $batch->end_date;
+            $batch->seat_limit = $request->seat_limit ?? $batch->seat_limit;
+            $batch->seat_left = $request->seat_left ?? $batch->seat_left;
+            if ($request->file('image')) {
+                if (!empty($batch->image)) {
+                    removeImage($batch->image);
+                }
+                $batch->image = saveImage($request,'image');
+            }
+            $batch->discount_price = $request->discount_price ?? $batch->discount_price;
+            $batch->update();
+
+            $teacher_ids = json_decode($request->teacher_user_ids, true);
+            BatchTeacher::where('batch_id', $batch->id)->delete();
+
+            // Assign new teacher assignments
+            foreach ($teacher_ids as $index => $teacher_id) {
+                $teacher_batch = new BatchTeacher();
+                $teacher_batch->batch_id = $batch->id;
+                $teacher_batch->user_id = $teacher_id;
+                $teacher_batch->save();
+            }
 
             return response()->json([
                 'message' => 'Batch updated successfully',
@@ -132,7 +161,6 @@ class RBatchController extends Controller
             ], 200);
 
         } catch (\Exception $e) {
-            // Log the error for debugging purposes
             Log::error('Error updating batch: ' . $e->getMessage());
 
             return response()->json([
@@ -140,6 +168,7 @@ class RBatchController extends Controller
             ], 500);
         }
     }
+
 
     public function destroy(string $id)
     {

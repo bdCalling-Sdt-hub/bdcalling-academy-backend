@@ -4,89 +4,94 @@ namespace App\Services;
 use App\Models\LeaveApplication;
 use App\Models\User;
 use App\Models\Teacher;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
-use Exception;
 
 class TeacherService
 {
-    public function createTeacher(array $data)
+    public function createTeacher(Request $request)
     {
         DB::beginTransaction();
 
         try {
-        // Create the user
-            $user = User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => bcrypt($data['password']),
-            'otp' => 0,
-            'role' => $data['role'],
-        ]);
+            $user = new User();
+            $user->name = $request->name;
+            $user->email = $request->email;
+            $user->password = Hash::make($request->password);
+            $user->otp = 0;
+            $user->role = 'MENTOR';
+            $user->email_verified_at = new Carbon();
+            $user->save();
 
-        $user->update(['email_verified_at' => now()]);
+            // Insert into teachers table
+            $teacher = new Teacher();
+            $teacher->user_id = $user->id;
+            $teacher->course_category_id = $request->course_category_id;
+            $teacher->phone_number = $request->phone_number;
+            $teacher->designation = $request->designation;
+            $teacher->expert = $request->expert;
+            $teacher->created_by = $request->created_by ?? null;
+            $teacher->status = 'active';
 
-        // Create the teacher
-        $teacher = Teacher::create([
-            'user_id' => $user->id,
-            'course_category_id' => $data['course_category_id'],
-            'phone_number' => $data['phone_number'],
-            'designation' => $data['designation'],
-            'expert' => $data['expert'],
-            'created_by' => $data['created_by'] ?? null, // Assuming you're using authentication
-            'status' => 'active',
-        ]);
+            if ($request->file('image')) {
+                if (!empty($teacher->image)) {
+                    removeImage($teacher->image);
+                }
+                $teacher->image = saveImage($request, 'image');
+            }
 
-        // Commit the transaction
-        DB::commit();
+            $teacher->save();
 
-        return $teacher;
-
-        } catch (Exception $e) {
-        // Rollback the transaction and log the error
-            DB::rollBack();
-            Log::error('Error creating teacher: ' . $e->getMessage());
+            DB::commit();
+            return $teacher;
+        } catch (\Exception $e) {
+            DB::rollback();
+            Log::error('Error updating teacher: ' . $e->getMessage());
             throw $e;
         }
     }
 
-    public function updateTeacher(array $data, string $id)
+    public function updateTeacher(Request $request, string $id)
     {
-
         DB::beginTransaction();
-
         try {
-            // Find the teacher
+            // Find the teacher record
             $teacher = Teacher::findOrFail($id);
+            // Find the corresponding user record
+            $user = User::findOrFail($teacher->user_id);
 
-            // Update the user
-            $user = $teacher->user;
-            $user->update([
-                'name' => $data['name'] ?? $teacher->name,
-                'email' => $data['email'] ?? $teacher->email,
-                // Only update the password if provided
-                'password' => isset($data['password']) ? bcrypt($data['password']) : $user->password,
-            ]);
+            // Update user details
+            $user->name = $request->name ?? $user->name;
+            $user->email = $request->email ?? $user->email;
+            if ($request->password) {
+                $user->password = Hash::make($request->password);
+            }
+            $user->save();
 
-            // Update the teacher
-            $teacher->update([
-                'course_category_id' => $data['course_category_id'],
-                'phone_number' => $data['phone_number'] ?? $teacher->phone_number,
-                'designation' => $data['designation'] ?? $teacher->designation,
-                'expert' => $data['expert'] ?? $teacher->expert,
-                'status' => $data['status'] ?? $teacher->status,
-                'created_by' => $data['created_by'] ?? $teacher->created_by,
-            ]);
+            // Update teacher details
+            $teacher->course_category_id = $request->course_category_id ?? $teacher->course_category_id;
+            $teacher->phone_number = $request->phone_number ?? $teacher->phone_number;
+            $teacher->designation = $request->designation ?? $teacher->designation;
+            $teacher->expert = $request->expert ?? $teacher->expert;
+            $teacher->created_by = $request->created_by ?? $teacher->created_by;
+            $teacher->status = $request->status ?? $teacher->status;
 
-            // Commit the transaction
+            if ($request->file('image')) {
+                if (!empty($teacher->image)) {
+                    removeImage($teacher->image);
+                }
+                $teacher->image = saveImage($request, 'image');
+            }
+
+            $teacher->save();
+
             DB::commit();
-
             return $teacher;
-
-        } catch (Exception $e) {
-            // Rollback the transaction and log the error
-            DB::rollBack();
+        } catch (\Exception $e) {
+            DB::rollback();
             Log::error('Error updating teacher: ' . $e->getMessage());
             throw $e;
         }

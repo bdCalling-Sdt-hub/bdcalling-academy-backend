@@ -10,14 +10,18 @@ return new class extends Migration
     {
         Schema::create('batches', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('course_id');
             $table->string('batch_id');
-            $table->foreignId('course_id')->constrained()->onDelete('cascade');
-            $table->string('batch_name');
-            $table->string('batch_type');
+            $table->string('batch_name')->nullable();
+            $table->date('start_date');
+            $table->date('end_date');
+            $table->integer('seat_limit');
+            $table->integer('seat_left');
+            $table->string('image');
+            $table->double('discount_price')->nullable();
             $table->timestamps();
         });
     }
-
     public function down(): void
     {
         Schema::dropIfExists('batches');

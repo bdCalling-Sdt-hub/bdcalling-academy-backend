@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers\Auth;
 
-//use App\Events\SendNotificationEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
-use App\Http\Requests\RegisterRequest;
 use App\Mail\SendOtp;
+use App\Models\Student;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
@@ -24,6 +24,7 @@ class AuthController extends Controller
     {
         return Auth::guard('api');
     }
+
     public function register(Request $request)
     {
         $user = User::where('email', $request->email)
@@ -31,10 +32,13 @@ class AuthController extends Controller
             ->first();
 
         if ($user) {
-            $random = Str::random(6);
-            Mail::to($request->email)->send(new SendOtp($random));
-            $user->update(['otp' => $random]);
-            $user->email_verified_at = new Carbon();
+            $encryptedPhoneNumber = Crypt::encryptString($request->phone_number);
+            $verificationLink = route('verify.email', [
+                'token' => $user->otp,
+                'phone_number' => $encryptedPhoneNumber,
+            ]);
+
+            Mail::to($request->email)->send(new SendOtp($verificationLink));
 
             return response(['message' => 'Please check your email for validate your email.'], 200);
         } else {
@@ -47,9 +51,11 @@ class AuthController extends Controller
                 'email' => 'required|string|email|max:60|unique:users|contains_dot',
                 'password' => 'required|string|min:6|confirmed',
                 'role' => ['required', Rule::in(['STUDENT', 'ADMIN', 'SUPER ADMIN', 'MENTOR'])],
+                'phone_number' => 'required|string|min:10|max:15',
             ], [
                 'email.contains_dot' => 'without (.) Your email is invalid',
             ]);
+
             if ($validator->fails()) {
                 return response()->json(['message' => $validator->errors()], 400);
             }
@@ -64,17 +70,28 @@ class AuthController extends Controller
 
             $user = User::create($userData);
 
-            Mail::to($request->email)->send(new SendOtp($user->otp));
-            return response()->json([
-                'message' => 'Please check your email to valid your email',
+            // Encrypt the phone number
+            $encryptedPhoneNumber = Crypt::encryptString($request->phone_number);
+
+            $verificationLink = route('verify.email', [
+                'token' => $user->otp,
+                'phone_number' => $encryptedPhoneNumber,
             ]);
+
+            Mail::to($request->email)->send(new SendOtp($verificationLink));
+
+            return response()->json([
+                'message' => 'Please check your email to verify your account',
+            ]);
+
         }
+
+
     }
 
     public function login(LoginRequest $request)
     {
         $userData = User::where('email', $request->email)->first();
-        // return gettype($userData->otp);
         if ($userData && Hash::check($request->password, $userData->password)) {
             if ($userData->email_verified_at ==  null) {
                 return response()->json(['message' => 'Your email is not verified'], 401);
@@ -90,28 +107,31 @@ class AuthController extends Controller
         return response()->json(['message' => 'Your credential is wrong'], 402);
     }
 
-    public function emailVerified(Request $request)
+    public function emailVerified(Request $request, $token)
     {
-        if ($request->otp) {
-            $user = User::where('otp', $request->otp)->first();
-            if ($user != null) {
-                $token = $this->guard()->login($user);
-            }
-        }
-
-        $user = User::where('otp', $request->otp)->first();
+        $user = User::where('otp', $token)->first();
 
         if (!$user) {
-            return response(['message' => 'Invalid'], 422);
+            return response()->json(['message' => 'Invalid verification link'], 400);
         }
-        $user->email_verified_at = new Carbon();
-        $user->otp = 0;
-        $user->update();
 
-        return response([
-            'message' => 'Email verified successfully',
-            'token' => $this->responseWithToken($token),
+        try {
+            $phone_number = Crypt::decryptString($request->query('phone_number'));
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Invalid phone number'], 400);
+        }
+
+        $user->email_verified_at = Carbon::now();
+        $user->otp = 0;
+        $user->save();
+
+        // Insert into student table
+        Student::create([
+            'user_id' => $user->id,
+            'phone_number' => $phone_number,
         ]);
+
+        return response()->json(['message' => 'Email verified successfully'], 200);
     }
 
     public function responseWithToken($token)
@@ -133,16 +153,11 @@ class AuthController extends Controller
         $user = User::where('email', $email)->first();
         if (!$user) {
             return response()->json(['error' => 'Email not found'], 401);
-        } else if ($user->google_id != null || $user->apple_id != null) {
-            return response()->json([
-                'message' => 'Your are social user, You do not need to forget password',
-            ], 400);
         } else {
             $random = Str::random(6);
             Mail::to($request->email)->send(new SendOtp($random));
             $user->update(['otp' => $random]);
             $user->email_verified_at = new Carbon();
-//            $user->update(['verify_email' => 0]);
             return response()->json(['message' => 'Please check your email for get the OTP']);
         }
     }
@@ -154,7 +169,7 @@ class AuthController extends Controller
             ->first();
 
         if (!$user) {
-            return response()->json(['error' => 'Your verified code does not matched '], 401);
+            return response()->json(['error' => 'Your verified code does not matched'], 401);
         } else {
             $user->email_verified_at = new Carbon();
             $user->otp = 0;
@@ -209,7 +224,6 @@ class AuthController extends Controller
             return response()->json(['message' => 'You can only resend OTP once every ' . $expirationTime . ' minutes'], 400);
         }
 
-        // Generate new OTP
         $newOtp = Str::random(6);
         Mail::to($user->email)->send(new SendOtp($newOtp));
 
@@ -244,7 +258,6 @@ class AuthController extends Controller
             return response()->json(['message' => 'Password reset successfully'], 200);
         }
     }
-
     public function loggedUserData()
     {
         if ($this->guard()->user()) {

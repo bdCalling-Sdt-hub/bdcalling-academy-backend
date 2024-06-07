@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class AddStudent extends Model
 {
@@ -31,22 +32,27 @@ class AddStudent extends Model
         {
             return $this->belongsTo(User::class);
         }
-    
+
         public function batch()
         {
             return $this->belongsTo(Batch::class);
         }
-    
+
         public function course()
         {
             return $this->belongsTo(Course::class);
         }
-    
+
         public function orders()
         {
             return $this->hasMany(Order::class);
         }
-    
-    
+
+        public function batches():BelongsToMany
+        {
+            return $this->belongsToMany(Batch::class,'batch_students','student_id','batch_id');
+        }
+
+
 
 }

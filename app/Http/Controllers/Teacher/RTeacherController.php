@@ -10,7 +10,6 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-
 class RTeacherController extends Controller
 {
 
@@ -35,7 +34,7 @@ class RTeacherController extends Controller
     public function store(TeacherRequest $request): JsonResponse
     {
         try {
-            $teacher = $this->teacherService->createTeacher($request->validated());
+            $teacher = $this->teacherService->createTeacher($request);
 
             return response()->json(['message' => 'Teacher added successfully', 'teacher' => $teacher], 201);
 
@@ -54,11 +53,17 @@ class RTeacherController extends Controller
 
     }
 
-    public function update(Request $request, string $id):JsonResponse
+    public function update(Request $request, string $id)
     {
 
         try {
-            $teacher = $this->teacherService->updateTeacher($request->all(), $id);
+            $data = $request->all();
+
+            if ($request->hasFile('image')) {
+                $data['image'] = $request->file('image');
+            }
+
+            $teacher = $this->teacherService->updateTeacher($request, $id);
             return response()->json(['message' => 'Teacher updated successfully', 'teacher' => $teacher], 200);
 
         } catch (ModelNotFoundException $e) {
