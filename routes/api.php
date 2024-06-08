@@ -18,6 +18,7 @@ use App\Http\Controllers\Teacher\TeacherPaymentController;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\AllStudentController;
 use App\Http\Controllers\Teacher\AttendanceController;
+use App\Http\Controllers\NotificationsController;
 
 use App\Http\Controllers\Api\Admin\AddStudentController;
 use App\Http\Controllers\Api\SuperAdmin\AboutController;
@@ -187,7 +188,7 @@ Route::get('/show-transactions',[TeacherPaymentController::class,'showAllTransac
 
 
 Route::post('/send-sms',[SendSMScontroller::class,'send_sms']);
-=======
+
 //==============================Sync Batch======================================
 Route::post('/batch-teachers',[BatchSyncController::class,'syncBatch']);
 
@@ -203,4 +204,9 @@ Route::get('/show-admit-student',[AdmitController::class,'showAdmitStudent']);
 Route::post('/student-payment',[StudentPaymentController::class,'admittedPayment']);
 Route::get('/show-student-payment',[StudentPaymentController::class,'showSingleStudentPaymentHistory']);
 
+//-------------------------- Notificatins------------------- //
 
+Route::get('/show-notification',[NotificationsController::class,'notifications']);
+Route::post('/mark-as-read/{id}',[NotificationsController::class,'markAsRead']);
+
+Route::get('/delete-notification/{id}',[NotificationsController::class,'destroy']);
