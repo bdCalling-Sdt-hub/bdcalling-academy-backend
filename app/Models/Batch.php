@@ -37,11 +37,6 @@ class Batch extends Model
     {
         return $this->hasMany(AddStudent::class);
     }
-//
-//    public function users():BelongsToMany
-//    {
-//        return $this->belongsToMany(User::class, 'batch_teachers', 'batch_id', 'user_id');
-//    }
 
     public function teachers():BelongsToMany
     {

@@ -36,4 +36,9 @@ class Student extends Model
     {
         return $this->hasOne(Order::class);
     }
+
+    public function mark():HasOne
+    {
+        return $this->hasOne(Mark::class);
+    }
 }

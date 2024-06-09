@@ -119,6 +119,7 @@ class RBatchController extends Controller
 
     public function update(Request $request, $id)
     {
+        DB::beginTransaction();
         try {
             $batch = Batch::find($id);
 
@@ -135,6 +136,7 @@ class RBatchController extends Controller
             $batch->end_date = $request->end_date ?? $batch->end_date;
             $batch->seat_limit = $request->seat_limit ?? $batch->seat_limit;
             $batch->seat_left = $request->seat_left ?? $batch->seat_left;
+            $batch->discount_price = $request->discount_price ?? $batch->discount_price;
             if ($request->file('image')) {
                 if (!empty($batch->image)) {
                     removeImage($batch->image);
@@ -145,15 +147,19 @@ class RBatchController extends Controller
             $batch->update();
 
             $teacher_ids = json_decode($request->teacher_user_ids, true);
-            BatchTeacher::where('batch_id', $batch->id)->delete();
 
-            // Assign new teacher assignments
-            foreach ($teacher_ids as $index => $teacher_id) {
-                $teacher_batch = new BatchTeacher();
-                $teacher_batch->batch_id = $batch->id;
-                $teacher_batch->user_id = $teacher_id;
-                $teacher_batch->save();
+            if (is_array($teacher_ids)) {
+                BatchTeacher::where('batch_id', $batch->id)->delete();
+
+                foreach ($teacher_ids as $index => $teacher_id) {
+                    $teacher_batch = new BatchTeacher();
+                    $teacher_batch->batch_id = $batch->id;
+                    $teacher_batch->user_id = $teacher_id;
+                    $teacher_batch->save();
+                }
             }
+
+            DB::commit();
 
             return response()->json([
                 'message' => 'Batch updated successfully',
@@ -168,7 +174,6 @@ class RBatchController extends Controller
             ], 500);
         }
     }
-
 
     public function destroy(string $id)
     {
