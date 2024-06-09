@@ -13,6 +13,7 @@ use App\Http\Controllers\Student\StudentController;
 use App\Http\Controllers\Student\StudentPaymentController;
 use App\Http\Controllers\Teacher\FeedbackController;
 use App\Http\Controllers\Teacher\MarkController;
+use App\Http\Controllers\Teacher\RAssignmentController;
 use App\Http\Controllers\Teacher\RoutineController;
 use App\Http\Controllers\Teacher\RTeacherController;
 use App\Http\Controllers\Teacher\TeacherDashboardController;
@@ -232,3 +233,6 @@ Route::get('/show-notification',[NotificationsController::class,'notifications']
 Route::post('/mark-as-read/{id}',[NotificationsController::class,'markAsRead']);
 
 Route::get('/delete-notification/{id}',[NotificationsController::class,'destroy']);
+
+
+Route::resource('/assignments', RAssignmentController::class)->except('create','edit');
