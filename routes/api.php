@@ -20,6 +20,7 @@ use App\Http\Controllers\Teacher\TeacherPaymentController;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\AllStudentController;
 use App\Http\Controllers\Teacher\AttendanceController;
+use App\Http\Controllers\NotificationsController;
 
 use App\Http\Controllers\Api\Admin\AddStudentController;
 use App\Http\Controllers\Api\SuperAdmin\AboutController;
@@ -30,6 +31,7 @@ use App\Http\Controllers\Api\SuperAdmin\GallerytController;
 use App\Http\Controllers\Api\SuperAdmin\successStoryController;
 use App\Http\Controllers\Api\SuperAdmin\AdmittedController;
 use App\Http\Controllers\Api\SuperAdmin\DropoutStudentController;
+use App\Http\Controllers\Api\SuperAdmin\SendSMScontroller;
 use App\Http\Controllers\Api\SuperAdmin\ReviewController;
 use App\Http\Controllers\Api\SuperAdmin\IncludeCostController;
 use App\Http\Controllers\Api\SuperAdmin\DashboardController;
@@ -191,6 +193,9 @@ Route::post('/teacher-payments-update/{id}',[TeacherPaymentController::class,'te
 Route::get('/show-transactions',[TeacherPaymentController::class,'showAllTransactionByTeacher']);
 
 
+
+Route::post('/send-sms',[SendSMScontroller::class,'send_sms']);
+
 //==============================Sync Batch======================================
 Route::post('/batch-teachers',[BatchSyncController::class,'syncBatch']);
 
@@ -206,6 +211,7 @@ Route::get('/show-admit-student',[AdmitController::class,'showAdmitStudent']);
 Route::post('/student-payment',[StudentPaymentController::class,'admittedPayment']);
 Route::get('/show-student-payment',[StudentPaymentController::class,'showSingleStudentPaymentHistory']);
 
+
 //============================Student Feedback=========================================
 Route::resource('/feedbacks',FeedbackController::class)->except('edit','create');
 
@@ -219,3 +225,10 @@ Route::post('/assign-mark',[MarkController::class,'studentMark']);
 Route::post('/assign-mark/{id}',[MarkController::class,'updateStudentMark']);
 Route::get('/show-assign-mark',[MarkController::class,'showStudentMark']);
 
+
+//-------------------------- Notificatins------------------- //
+
+Route::get('/show-notification',[NotificationsController::class,'notifications']);
+Route::post('/mark-as-read/{id}',[NotificationsController::class,'markAsRead']);
+
+Route::get('/delete-notification/{id}',[NotificationsController::class,'destroy']);
