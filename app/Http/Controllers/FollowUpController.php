@@ -9,20 +9,6 @@ use Illuminate\Http\Request;
 
 class FollowUpController extends Controller
 {
-    //
-
-//    public function followUpMessage(FollowUpRequest $request)
-//    {
-//        $message = $request->message;
-//        $id = $request->id;
-//        $student = Student::where('id',$id)->first();
-//        if (empty($student)){
-//            return response()->json(['message' => 'Student Does Not Exist'],404);
-//        }
-//        $student->notify(new FollowUpMessage($student->phone_number , $message));
-//        return response()->json(['message' => 'Notification sent successfully','text' => $message, 'phone_number' => $student->phone_number], 200);
-//
-//    }
 
     public function followUpMessage(FollowUpRequest $request)
     {
