@@ -75,7 +75,7 @@ class StudentPaymentController extends Controller
     {
         $student_id = $request->student_id;
         $batch_id = $request->batch_id;
-        return $order_details = Order::with('student.user','batch.course')->where('student_id', $student_id)->where('batch_id',$batch_id)->get();
+        $order_details = Order::with('student.user','batch.course')->where('student_id', $student_id)->where('batch_id',$batch_id)->get();
 
         $formatted_student_payment_details = $order_details->map(function ($order){
             $order->installment_date = json_decode($order->installment_date);

@@ -11,6 +11,8 @@ use App\Http\Controllers\RCourseController;
 use App\Http\Controllers\Student\AdmitController;
 use App\Http\Controllers\Student\StudentController;
 use App\Http\Controllers\Student\StudentPaymentController;
+use App\Http\Controllers\Teacher\FeedbackController;
+use App\Http\Controllers\Teacher\MarkController;
 use App\Http\Controllers\Teacher\RoutineController;
 use App\Http\Controllers\Teacher\RTeacherController;
 use App\Http\Controllers\Teacher\TeacherDashboardController;
@@ -33,6 +35,7 @@ use App\Http\Controllers\Api\SuperAdmin\IncludeCostController;
 use App\Http\Controllers\Api\SuperAdmin\DashboardController;
 use App\Http\Controllers\Api\Student\StudentDashbordController;
 use App\Http\Controllers\Api\Student\QuizeController;
+use App\Http\Controllers\WebsiteController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -170,6 +173,10 @@ Route::middleware(['student'])->group(function (){
     Route::get('/show-quize-student/{id}', [StudentDashbordController::class, 'show_quize']);
     Route::post('/examination-test', [StudentDashbordController::class, 'exam_test_ans']);
 
+
+    //student dasboard route
+    Route::get('/show-student-feedback',[FeedbackController::class,'showFeedback']);
+
 });
 Route::resource('routines',RoutineController::class)->except('create','edit');
 
@@ -198,4 +205,17 @@ Route::get('/show-admit-student',[AdmitController::class,'showAdmitStudent']);
 //=================================Student Payment======================================
 Route::post('/student-payment',[StudentPaymentController::class,'admittedPayment']);
 Route::get('/show-student-payment',[StudentPaymentController::class,'showSingleStudentPaymentHistory']);
+
+//============================Student Feedback=========================================
+Route::resource('/feedbacks',FeedbackController::class)->except('edit','create');
+
+
+///======================Website Api's ====================================
+
+Route::get('/filter-courses',[WebsiteController::class,'filterCourse']);
+
+//==========================Student Mark Assign========================
+Route::post('/assign-mark',[MarkController::class,'studentMark']);
+Route::post('/assign-mark/{id}',[MarkController::class,'updateStudentMark']);
+Route::get('/show-assign-mark',[MarkController::class,'showStudentMark']);
 
