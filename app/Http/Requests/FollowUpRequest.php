@@ -16,7 +16,6 @@ class FollowUpRequest extends FormRequest
     {
         return [
             'message' => 'required|string',
-//            'ids' => 'required|array',
             'ids.*' => 'exists:students,id',
         ];
     }
