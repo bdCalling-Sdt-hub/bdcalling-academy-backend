@@ -76,7 +76,7 @@ class AllStudentController extends Controller
         $query->join('users', 'add_students.user_id', '=', 'users.id')
             ->select('add_students.*', 'users.name as user_name');
         
-        // Apply filters conditionally
+        // Apply filters conditionally 
         if ($request->has('date') && !empty($request->date)) {
             $query->where('add_students.dob', 'like', "%{$request->date}%");
         }
