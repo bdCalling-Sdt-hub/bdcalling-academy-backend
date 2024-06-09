@@ -21,4 +21,9 @@ class Mark extends Model
     {
         return $this->belongsTo(Student::class);
     }
+
+    public function batch():BelongsTo
+    {
+        return $this->belongsTo(Batch::class);
+    }
 }

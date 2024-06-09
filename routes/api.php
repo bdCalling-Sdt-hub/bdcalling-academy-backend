@@ -216,7 +216,7 @@ Route::get('/show-student-payment',[StudentPaymentController::class,'showSingleS
 Route::resource('/feedbacks',FeedbackController::class)->except('edit','create');
 
 
-///======================Website Api's ====================================
+///====================== Website Api's ======================================
 
 Route::get('/filter-courses',[WebsiteController::class,'filterCourse']);
 
