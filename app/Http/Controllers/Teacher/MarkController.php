@@ -11,7 +11,30 @@ class MarkController extends Controller
 {
     public function showStudentMark(Request $request)
     {
-        return $student_marks = Mark::with('student.user')->paginate(9);
+        $query = Mark::with('student.user','batch.course');
+
+        if ($request->filled('course_name')) {
+            $query->whereHas('batch.course', function ($q) use ($request) {
+                $q->where('course_name', $request->course_name);
+            });
+        }
+        if ($request->filled('date')){
+            $query->where('date',$request->date);
+        }
+
+        if ($request->filled('batch_id')){
+            $query->whereHas('batch',function ($q) use ($request){
+                $q->where('batch_id',$request->batch_id);
+            });
+        }
+        if ($request->filled('email')){
+            $query->whereHas('student.user',function ($q) use ($request){
+                $q->where('email',$request->email);
+            });
+        }
+        $students_mark = $query->paginate(9);
+
+        return response()->json(['message' => $students_mark]);
     }
     public function studentMark(MarkRequest $request)
     {

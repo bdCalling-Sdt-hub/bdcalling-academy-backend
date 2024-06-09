@@ -58,4 +58,9 @@ class Batch extends Model
     {
         return $this->hasOne(Student::class);
     }
+
+    public function batch():HasOne
+    {
+        return $this->hasOne(Batch::class);
+    }
 }
