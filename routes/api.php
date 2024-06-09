@@ -4,6 +4,7 @@ use App\Http\Controllers\AddEmployeeController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Batch\BatchSyncController;
 use App\Http\Controllers\Calculation\CostController;
+use App\Http\Controllers\FollowUpController;
 use App\Http\Controllers\ModuleController;
 use App\Http\Controllers\RBatchController;
 use App\Http\Controllers\RCategoryController;
@@ -236,3 +237,8 @@ Route::get('/delete-notification/{id}',[NotificationsController::class,'destroy'
 
 
 Route::resource('/assignments', RAssignmentController::class)->except('create','edit');
+
+
+
+//================================Follow Up Message ===================================
+Route::post('/follow-up-message',[FollowUpController::class,'followUpMessage']);
