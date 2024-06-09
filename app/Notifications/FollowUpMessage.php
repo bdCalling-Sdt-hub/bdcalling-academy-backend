@@ -12,9 +12,12 @@ class FollowUpMessage extends Notification
 {
     use Queueable;
 
-    public function __construct()
+    public $phone_number;
+    public $message;
+    public function __construct($phone_number,$message)
     {
-        //
+        $this->phone_number = $phone_number;
+        $this->message = $message;
     }
 
 
@@ -26,8 +29,9 @@ class FollowUpMessage extends Notification
     public function toVonage(object $notifiable): VonageMessage
     {
         return (new VonageMessage)
+            ->to($this->phone_number)
             ->clientReference((string) $notifiable->id)
-            ->content('Message from silent killer');
+            ->content($this->message);
     }
 
 
