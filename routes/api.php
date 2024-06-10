@@ -4,6 +4,7 @@ use App\Http\Controllers\AddEmployeeController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Batch\BatchSyncController;
 use App\Http\Controllers\Calculation\CostController;
+use App\Http\Controllers\FollowUpController;
 use App\Http\Controllers\ModuleController;
 use App\Http\Controllers\RBatchController;
 use App\Http\Controllers\RCategoryController;
@@ -11,6 +12,9 @@ use App\Http\Controllers\RCourseController;
 use App\Http\Controllers\Student\AdmitController;
 use App\Http\Controllers\Student\StudentController;
 use App\Http\Controllers\Student\StudentPaymentController;
+use App\Http\Controllers\Teacher\FeedbackController;
+use App\Http\Controllers\Teacher\MarkController;
+use App\Http\Controllers\Teacher\RAssignmentController;
 use App\Http\Controllers\Teacher\RoutineController;
 use App\Http\Controllers\Teacher\RTeacherController;
 use App\Http\Controllers\Teacher\TeacherDashboardController;
@@ -37,6 +41,7 @@ use App\Http\Controllers\Api\Student\StudentDashbordController;
 use App\Http\Controllers\Api\Student\QuizeController;
 
 use App\Http\Controllers\Api\WebApi\FreSemenarController;
+use App\Http\Controllers\WebsiteController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -189,6 +194,10 @@ Route::middleware(['student'])->group(function (){
     Route::get('/show-quize-student/{id}', [StudentDashbordController::class, 'show_quize']);
     Route::post('/examination-test', [StudentDashbordController::class, 'exam_test_ans']);
 
+
+    //student dasboard route
+    Route::get('/show-student-feedback',[FeedbackController::class,'showFeedback']);
+
 });
 Route::resource('routines',RoutineController::class)->except('create','edit');
 
@@ -221,9 +230,32 @@ Route::get('/show-admit-student',[AdmitController::class,'showAdmitStudent']);
 Route::post('/student-payment',[StudentPaymentController::class,'admittedPayment']);
 Route::get('/show-student-payment',[StudentPaymentController::class,'showSingleStudentPaymentHistory']);
 
+
+//============================Student Feedback=========================================
+Route::resource('/feedbacks',FeedbackController::class)->except('edit','create');
+
+
+///====================== Website Api's ======================================
+
+Route::get('/filter-courses',[WebsiteController::class,'filterCourse']);
+
+//==========================Student Mark Assign========================
+Route::post('/assign-mark',[MarkController::class,'studentMark']);
+Route::post('/assign-mark/{id}',[MarkController::class,'updateStudentMark']);
+Route::get('/show-assign-mark',[MarkController::class,'showStudentMark']);
+
+
 //-------------------------- Notificatins------------------- //
 
 Route::get('/show-notification',[NotificationsController::class,'notifications']);
 Route::post('/mark-as-read/{id}',[NotificationsController::class,'markAsRead']);
 
 Route::get('/delete-notification/{id}',[NotificationsController::class,'destroy']);
+
+
+Route::resource('/assignments', RAssignmentController::class)->except('create','edit');
+
+
+
+//================================Follow Up Message ===================================
+Route::post('/follow-up-message',[FollowUpController::class,'followUpMessage']);

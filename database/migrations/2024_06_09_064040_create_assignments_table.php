@@ -11,13 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('course_modules', function (Blueprint $table) {
+        Schema::create('assignments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('course_id');
-            $table->string('module_title');
-            $table->string('created_by')->nullable();
-            $table->string('module_no');
-//            $table->json('module_class');
+            $table->foreignId('module_id');
+            $table->foreignId('batch_id');
+            $table->time('time');
+            $table->date('date');
+            $table->string('assignment_name');
+            $table->string('question_link');
             $table->timestamps();
         });
     }
@@ -27,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('course_modules');
+        Schema::dropIfExists('assignments');
     }
 };
