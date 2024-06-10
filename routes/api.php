@@ -39,6 +39,8 @@ use App\Http\Controllers\Api\SuperAdmin\IncludeCostController;
 use App\Http\Controllers\Api\SuperAdmin\DashboardController;
 use App\Http\Controllers\Api\Student\StudentDashbordController;
 use App\Http\Controllers\Api\Student\QuizeController;
+
+use App\Http\Controllers\Api\WebApi\FreSemenarController;
 use App\Http\Controllers\WebsiteController;
 use Illuminate\Support\Facades\Route;
 
@@ -93,6 +95,7 @@ Route::get('/singel/addmit/student/{id}', [AdmittedController::class, 'singel_ad
 Route::post('/dropout/addmit/student', [AdmittedController::class, 'dropout_student']);
 Route::get('/show/dropout/student', [DropoutStudentController::class, 'show_dropout_student']);
 Route::post('/refund', [DropoutStudentController::class, 'store_refund']);
+Route::get('/show-event-student', [AllStudentController::class, 'show_dropout_student']);
 
 // ========================= Add student ============== //
 
@@ -118,6 +121,8 @@ Route::post('/update/terms', [AboutController::class, 'terms_condition']);
 
 // ========================= ASSESSION ======================== //
 
+// with web api
+
 Route::resource('/assession', AssessionController::class);
 Route::resource('/success/story', successStoryController::class);
 Route::resource('/event', EventController::class);
@@ -129,6 +134,18 @@ Route::post('/contacts', [ContactUsController::class, 'store']);  // Create
 Route::get('/contacts', [ContactUsController::class, 'index']);  // Read (All)
 Route::get('/contacts/{id}', [ContactUsController::class, 'show']);  // Read (Single)
 Route::delete('/contacts/{id}', [ContactUsController::class, 'destroy']);
+
+// --------------- Join free semenar -------------------- //
+
+Route::post('/store-semenar', [FreSemenarController::class, 'store']); 
+Route::get('/show-semenar', [FreSemenarController::class, 'show_semenar']);  
+Route::get('/destry-semenar/{id}', [FreSemenarController::class, 'destroy']);  
+
+// ------------------ Subscriber ----------------------- //
+
+Route::post('/store-subscriber', [FreSemenarController::class, 'subscrib_store']); 
+Route::get('/show-subscriber', [FreSemenarController::class, 'show_subscriber']);  
+Route::get('/destry-subscriber/{id}', [FreSemenarController::class, 'destroy_subscriber']);  
 
 
 Route::middleware(['super.admin'])->group(function (){
@@ -158,7 +175,7 @@ Route::middleware(['super.admin'])->group(function (){
     Route::get('show-module',[ModuleController::class,'showModule']);
 
     //==================== Quize ==============================//
-
+    //student and super admin show quize// 
     Route::resource('quize',QuizeController::class);
 
 });
