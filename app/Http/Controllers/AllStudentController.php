@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\AddStudent;
+use App\Models\Student;
 class AllStudentController extends Controller
 {
 
@@ -127,6 +128,12 @@ class AllStudentController extends Controller
                 'message'=>'record not found',
             ]);
         }
+    }
+
+    public function event_student()
+    {
+        return 'hello ';
+        return $event_student = Student::where('user_type', 'event')->get();
     }
 
     public function updateStudent(Request $request)

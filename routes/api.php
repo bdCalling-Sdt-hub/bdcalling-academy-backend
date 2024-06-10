@@ -88,6 +88,7 @@ Route::get('/singel/addmit/student/{id}', [AdmittedController::class, 'singel_ad
 Route::post('/dropout/addmit/student', [AdmittedController::class, 'dropout_student']);
 Route::get('/show/dropout/student', [DropoutStudentController::class, 'show_dropout_student']);
 Route::post('/refund', [DropoutStudentController::class, 'store_refund']);
+Route::get('/show-event-student', [AllStudentController::class, 'show_dropout_student']);
 
 // ========================= Add student ============== //
 
@@ -153,7 +154,7 @@ Route::middleware(['super.admin'])->group(function (){
     Route::get('show-module',[ModuleController::class,'showModule']);
 
     //==================== Quize ==============================//
-
+    //student show quize// 
     Route::resource('quize',QuizeController::class);
 
 });

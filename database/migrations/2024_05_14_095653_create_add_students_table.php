@@ -23,7 +23,7 @@ return new class extends Migration {
             $table->text('address')->nullable();
             $table->string('add_by')->nullable();
             $table->string('student_type')->nullable();
-            $table->timestamps();
+            $table->timestamps(); 
         });
     }
 
