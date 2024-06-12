@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Batch;
+use App\Models\Student;
 use Illuminate\Http\Request;
 use App\Library\SslCommerz\SslCommerzNotification;
 use DB;
@@ -12,22 +14,25 @@ use Illuminate\Support\Facades\Validator;
 
 class PaymentSslcommerzeController extends Controller
 {
-    //
-
     public function index(Request $request)
     {
-
-//        $user = Auth::guard('api')->user();
-            $user = auth()->user();
+        $price = $request->price;
+        $batch_id = $request->batch_id;
+        $discount_price = $request->discount_price ?? null;
+        $user = auth()->user();
+        $student = Student::with('user')->where('user_id',$user->id)->first();
+        $course = Batch::with('course')->where('id',$batch_id)->first();
+        $course_fee = $course->course->price;
+        $course_name = $course->course->course_name;
 
         if ($user) {
 
             if ($user->role === "STUDENT") {
 
-                return $product = Course::with("category")->find($request->course_id);
+                $product = Course::find($request->course_id);
 
                 $post_data = array();
-                $post_data['total_amount'] = $request->price; # You cant not pay less than 10
+                $post_data['total_amount'] = $price; # You cant not pay less than 10
                 $post_data['currency'] = "BDT";
                 $post_data['tran_id'] = uniqid(); // tran_id must be unique
 
@@ -38,22 +43,11 @@ class PaymentSslcommerzeController extends Controller
                 $post_data['cus_email'] = $user->email;
 //                $post_data['cus_add1'] = $user->image;
                 $post_data['cus_country'] = "Bangladesh";
-//                $post_data['cus_phone'] = $user->mobileNumber;
-
-
-                # SHIPMENT INFORMATION
-                // $post_data['ship_name'] = "Store Test";
-                // $post_data['ship_add1'] = "Dhaka";
-                // $post_data['ship_add2'] = "Dhaka";
-                // $post_data['ship_city'] = "Dhaka";
-                // $post_data['ship_state'] = "Dhaka";
-                // $post_data['ship_postcode'] = "1000";
-                // $post_data['ship_phone'] = "";
-                // $post_data['ship_country'] = "Bangladesh";
+                $post_data['cus_phone'] = $student->phone_number;
 
                 $post_data['shipping_method'] = "NO";
-                $post_data['product_name'] = $product->courseName;
-                $post_data['product_category'] = $product->category["category_name"];
+                $post_data['product_name'] = $course_name;
+                $post_data['product_category'] = 1;
                 $post_data['product_profile'] = "Educational Course";
 
 
@@ -61,11 +55,15 @@ class PaymentSslcommerzeController extends Controller
                 $update_product = DB::table('orders')
                     ->where('transaction_id', $post_data['tran_id'])
                     ->updateOrInsert([
-                        "course_id" => $product->id,
-//                        "course_name" => $post_data['product_name'],
+                        'batch_id' => $request->batch_id,
                         'amount' => $post_data['total_amount'],
+                        'course_fee' => $course_fee,
+                        'discount_price' => $discount_price,
+                        'price' => $post_data['total_amount'],
+                        'due' => 0,
                         'transaction_id' => $post_data['tran_id'],
-                        "student_id" => $user->id,
+                        "student_id" => $student->id,
+                        'payment_type' => 'online',
                         "currency" => "BDT",
                         'status' => 'Pending',
                         'gateway_name'=>$request->gateway_name,
@@ -121,7 +119,7 @@ class PaymentSslcommerzeController extends Controller
                     ->where('transaction_id', $tran_id)
                     ->update(['status' => 'Processing','updated_at' => now()]);
 
-                Redirect::away('[http://192.168.10.64:5000/payment/status/success');
+                Redirect::away('[http://103.43.151.135:8000/payment/status/success');
                 echo "<br >Transaction is successfully Completed";
             }
         } else if ($order_details->status == 'Processing' || $order_details->status == 'Complete') {
@@ -129,7 +127,7 @@ class PaymentSslcommerzeController extends Controller
              That means through IPN Order status already updated. Now you can just show the customer that transaction is completed. No need to udate database.
              */
 
-            Redirect::away('[http://192.168.10.64:5000/payment/status/success');
+            Redirect::away('[http://103.43.151.135:8000/payment/status/success');
             echo "Transaction is successfully Completed";
         } else {
             #That means something wrong happened. You can redirect customer to your product page.
@@ -149,13 +147,13 @@ class PaymentSslcommerzeController extends Controller
             $update_product = DB::table('orders')
                 ->where('transaction_id', $tran_id)
                 ->update(['status' => 'Failed','updated_at' => now()]);
-            Redirect::away('[http://192.168.10.64:5000/payment/status/failed');
+            Redirect::away('[http://103.43.151.135:8000/payment/status/failed');
             echo "Transaction is Falied";
         } else if ($order_details->status == 'Processing' || $order_details->status == 'Complete') {
-            Redirect::away('[http://192.168.10.64:5000/payment/status/failed');
+            Redirect::away('[http://103.43.151.135:8000/payment/status/failed');
             echo "Transaction is already Successful";
         } else {
-            Redirect::away('[http://192.168.10.64:5000/payment/status/failed');
+            Redirect::away('[http://103.43.151.135:8000/payment/status/failed');
             echo "Transaction is Invalid";
         }
     }

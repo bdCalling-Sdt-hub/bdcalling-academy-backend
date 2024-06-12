@@ -191,8 +191,6 @@ Route::post('/send-sms',[SendSMScontroller::class,'send_sms']);
 //==============================Sync Batch======================================
 Route::post('/batch-teachers',[BatchSyncController::class,'syncBatch']);
 
-//============================= Student =====================================
-Route::resource('/students',StudentController::class)->except('create','edit');
 
 
 Route::post('/admit-student',[AdmitController::class,'admitStudent']);
@@ -252,5 +250,6 @@ Route::middleware(['student.admin'])->group(function (){
 });
 
 Route::middleware(['mentor.admin'])->group(function (){
-
+    //============================= Student =====================================
+    Route::resource('/students',StudentController::class)->except('create','edit');
 });
