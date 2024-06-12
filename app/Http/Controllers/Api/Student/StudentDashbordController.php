@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api\Student;
 use App\Models\Course;
 use App\Models\Order;
-use App\Models\AddStudent;
+use App\Models\Student;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Quize;
@@ -14,9 +14,9 @@ class StudentDashbordController extends Controller
     public function counting_student_info()
     {
          $auth = auth()->user()->id;
-         $check_student = AddStudent::where('user_id', $auth)->pluck('id');        
-         $complete_class = Attendance::whereIn('add_students_id', $check_student)->count();
-         $complete_course = AddStudent::where('user_id',$auth)->where('status','complet')->count();
+         $check_student = Student::where('user_id', $auth)->pluck('id');        
+         $complete_class = Attendance::whereIn('student_id', $check_student)->count();
+         $complete_course = Student::where('user_id',$auth)->where('status','complet')->count();
          $payment =  Order::where('user_id',$auth)->sum('amount');
          $course_fee = Order::where('user_id',$auth)->sum('course_fee');
          $due = $course_fee - $payment;
