@@ -10,97 +10,132 @@ class AllStudentController extends Controller
 
     public function Show_all_student(Request $request)
     {
-        // Initialize the query builder for the AddStudent model
-        $query = AddStudent::query();
-        
-        // Join the users table and select the name column
-        $query->join('users', 'add_students.user_id', '=', 'users.id')
-            ->select('add_students.*', 'users.name as user_name');
-        
-        // Apply filters conditionally
-        if ($request->has('date') && !empty($request->date)) {
-            $query->where('add_students.dob', 'like', "%{$request->date}%");
+        $registration_date = $request->get('registration_date');
+        $name = $request->get('name');
+        $phone_number = $request->get('phone_number');
+        $category_name = $request->get('category_name');
+        //$batch_id = $request->get('batch_id');
+    
+        $query = Student::with(['user', 'category']);
+    
+        if (!empty($registration_date)) {
+            $query->where('registration_date', $registration_date);
         }
-        if ($request->has('name') && !empty($request->name)) {
-            $query->orWhere('users.name', 'like', "%{$request->name}%");
+    
+        if (!empty($name)) {
+            $query->whereHas('user', function ($query) use ($name) {
+                $query->where('name', 'like', '%' . $name . '%');
+            });
         }
-        if ($request->has('phone') && !empty($request->phone)) {
-            $query->orWhere('add_students.phone', 'like', "%{$request->phone}%");
+    
+        if (!empty($phone_number)) {
+            $query->where('phone_number', $phone_number);
         }
-        if ($request->has('category') && !empty($request->category)) {
-            $query->orWhere('add_students.category_id', 'like', "%{$request->category}%");
+    
+        if (!empty($category_name)) {
+            $query->whereHas('category', function ($query) use ($category_name) {
+                $query->where('category_id', 'like', '%' . $category_name . '%');
+            });
         }
-        
-        // Paginate the results
-        $students = $query->paginate(10);
-        
-        // Return the paginated results
-        return $students;
+    
+        // if (!empty($batch_id)) {
+        //     $query->where('batch_id', 'like', '%' . $batch_id . '%');
+        // }
+    
+        return $query->paginate(10);
     }
 
     public function auth_type_student(Request $request)
     {
-        // Initialize the query builder for the AddStudent model and filter by student_type
-        $query = AddStudent::where('student_type', 'auth_type');
-        
-        // Join the users table and select the name column
-        $query->join('users', 'add_students.user_id', '=', 'users.id')
-            ->select('add_students.*', 'users.name as user_name');
-        
-        // Apply filters conditionally
-        if ($request->has('date') && !empty($request->date)) {
-            $query->where('add_students.dob', 'like', "%{$request->date}%");
+        $registration_date = $request->get('registration_date');
+        $name = $request->get('name');
+        $phone_number = $request->get('phone_number');
+       
+    
+        $query = Student::where('student_type','auth student')->with(['user', 'category']);
+    
+        if (!empty($registration_date)) {
+            $query->where('registration_date', $registration_date);
         }
-        if ($request->has('name') && !empty($request->name)) {
-            $query->orWhere('users.name', 'like', "%{$request->name}%");
+    
+        if (!empty($name)) {
+            $query->whereHas('user', function ($query) use ($name) {
+                $query->where('name', 'like', '%' . $name . '%');
+            });
         }
-        if ($request->has('phone') && !empty($request->phone)) {
-            $query->orWhere('add_students.phone', 'like', "%{$request->phone}%");
+    
+        if (!empty($phone_number)) {
+            $query->where('phone_number', $phone_number);
         }
-        if ($request->has('category') && !empty($request->category)) {
-            $query->orWhere('add_students.category_id', 'like', "%{$request->category}%");
-        }
-        
-        // Paginate the results
-        $students = $query->paginate(10);
-        
-        // Return the paginated results
-        return $students;
+    
+        return $query->paginate(10);
     }
 
     public function teacher_type_student(Request $request)
     {
-        // Initialize the query builder for the AddStudent model and filter by student_type
-        $query = AddStudent::where('student_type', 'teacher_type');
-        
-        // Join the users table and select the name column
-        $query->join('users', 'add_students.user_id', '=', 'users.id')
-            ->select('add_students.*', 'users.name as user_name');
-        
-        // Apply filters conditionally 
-        if ($request->has('date') && !empty($request->date)) {
-            $query->where('add_students.dob', 'like', "%{$request->date}%");
+        $registration_date = $request->get('registration_date');
+        $name = $request->get('name');
+        $phone_number = $request->get('phone_number');
+        $category_name = $request->get('category_name');
+       
+    
+        $query = Student::where('student_type','techer student')->with(['user', 'category']);
+    
+        if (!empty($registration_date)) {
+            $query->where('registration_date', $registration_date);
         }
-        if ($request->has('name') && !empty($request->name)) {
-            $query->orWhere('users.name', 'like', "%{$request->name}%");
+    
+        if (!empty($name)) {
+            $query->whereHas('user', function ($query) use ($name) {
+                $query->where('name', 'like', '%' . $name . '%');
+            });
         }
-        if ($request->has('phone') && !empty($request->phone)) {
-            $query->orWhere('add_students.phone', 'like', "%{$request->phone}%");
-        }
-        if ($request->has('category') && !empty($request->category)) {
-            $query->orWhere('add_students.category_id', 'like', "%{$request->category}%");
+    
+        if (!empty($phone_number)) {
+            $query->where('phone_number', $phone_number);
         }
         
-        // Paginate the results
-        $students = $query->paginate(10);
-        
-        // Return the paginated results
-        return $students;
+    
+        return $query->paginate(10);
     }
+
+    public function event_type_student(Request $request)
+    {
+        $registration_date = $request->get('registration_date');
+        $name = $request->get('name');
+        $phone_number = $request->get('phone_number');
+        $category_name = $request->get('category_name');
+        
+    
+        $query = Student::where('student_type','event student')->with(['user', 'category']);
+    
+        if (!empty($registration_date)) {
+            $query->where('registration_date', $registration_date);
+        }
+    
+        if (!empty($name)) {
+            $query->whereHas('user', function ($query) use ($name) {
+                $query->where('name', 'like', '%' . $name . '%');
+            });
+        }
+    
+        if (!empty($phone_number)) {
+            $query->where('phone_number', $phone_number);
+        }
+
+        if (!empty($category_name)) {
+            $query->whereHas('category', function ($query) use ($category_name) {
+                $query->where('category_id', 'like', '%' . $category_name . '%');
+            });
+        }
+    
+        return $query->paginate(10);
+    }
+    
 
     public function student_details($id)
     {
-        $students = AddStudent::where('id',$id)->first();
+        $students = Student::where('id',$id)->with(['user', 'category'])->first();
         if($students){
             return response()->json([
                 'status'=>'success',
@@ -116,7 +151,7 @@ class AllStudentController extends Controller
 
     public function destroy($id)
     {
-        $students = AddStudent::where('id',$id)->delete();
+        $students = Student::where('id',$id)->delete();
         if($students){
             return response()->json([
                 'status'=>'success',
@@ -130,11 +165,6 @@ class AllStudentController extends Controller
         }
     }
 
-    public function event_student()
-    {
-        return 'hello ';
-        return $event_student = Student::where('user_type', 'event')->get();
-    }
 
     public function updateStudent(Request $request)
     {
