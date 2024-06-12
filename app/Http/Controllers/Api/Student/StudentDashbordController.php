@@ -15,7 +15,7 @@ class StudentDashbordController extends Controller
     public function counting_student_info()
     {
          $auth = auth()->user()->id;
-         $check_student = Student::where('user_id', $auth)->pluck('id');        
+         $check_student = Student::where('user_id', $auth)->pluck('id');
          $complete_class = Attendance::whereIn('student_id', $check_student)->count();
          $complete_course = Student::where('user_id',$auth)->where('status','complet')->count();
          $payment =  Order::where('student_id',$auth)->sum('amount');
@@ -43,7 +43,7 @@ class StudentDashbordController extends Controller
             return response()->json(['status'=>'success','data'=>$courses], 200);
         }
         return response()->json(['status'=>false,'message'=>'Record not founde'], 402);
-              
+
     }
 
     public function course_modul_video($id)
@@ -62,7 +62,7 @@ class StudentDashbordController extends Controller
          if($show_quize_test){
             return response()->json(['status'=>'success','data'=>$show_quize_test],200);
          }else{
-            return response()->json(['status'=>false,'message'=>'Record not found'],400); 
+            return response()->json(['status'=>false,'message'=>'Record not found'],400);
          }
     }
 
@@ -81,13 +81,13 @@ class StudentDashbordController extends Controller
             if($exam){
                 return response()->json(['status'=>'success','data'=>$exam],200);
             }else{
-                return response()->json(['status'=>false,'message'=>'Internall server error'],400);  
+                return response()->json(['status'=>false,'message'=>'Internall server error'],400);
             }
         }else{
-            return response()->json(['status'=>false,'message'=>'All ready examination complet'],400); 
+            return response()->json(['status'=>false,'message'=>'All ready examination complet'],400);
         }
-        
+
     }
 
-    
+
 }

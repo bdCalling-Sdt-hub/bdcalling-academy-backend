@@ -12,11 +12,11 @@ class AllStudentController extends Controller
     {
         // Initialize the query builder for the AddStudent model
         $query = AddStudent::query();
-        
+
         // Join the users table and select the name column
         $query->join('users', 'add_students.user_id', '=', 'users.id')
             ->select('add_students.*', 'users.name as user_name');
-        
+
         // Apply filters conditionally
         if ($request->has('date') && !empty($request->date)) {
             $query->where('add_students.dob', 'like', "%{$request->date}%");
@@ -30,10 +30,10 @@ class AllStudentController extends Controller
         if ($request->has('category') && !empty($request->category)) {
             $query->orWhere('add_students.category_id', 'like', "%{$request->category}%");
         }
-        
+
         // Paginate the results
         $students = $query->paginate(10);
-        
+
         // Return the paginated results
         return $students;
     }
@@ -41,17 +41,17 @@ class AllStudentController extends Controller
     public function auth_type_student(Request $request)
     {
         // Initialize the query builder for the AddStudent model and filter by student_type
-        $query = AddStudent::where('student_type', 'auth_type');
-        
+         $query = Student::with('user')->where('student_type', 'auth');
+
         // Join the users table and select the name column
-        $query->join('users', 'add_students.user_id', '=', 'users.id')
-            ->select('add_students.*', 'users.name as user_name');
-        
+//        $query->join('users', 'add_students.user_id', '=', 'users.id')
+//            ->select('add_students.*', 'users.name as user_name');
+
         // Apply filters conditionally
-        if ($request->has('date') && !empty($request->date)) {
-            $query->where('add_students.dob', 'like', "%{$request->date}%");
+        if ($request->filled('date')) {
+            $query->where('dob', 'like', "%{$request->date}%");
         }
-        if ($request->has('name') && !empty($request->name)) {
+        if ($request->filled('name')) {
             $query->orWhere('users.name', 'like', "%{$request->name}%");
         }
         if ($request->has('phone') && !empty($request->phone)) {
@@ -60,10 +60,10 @@ class AllStudentController extends Controller
         if ($request->has('category') && !empty($request->category)) {
             $query->orWhere('add_students.category_id', 'like', "%{$request->category}%");
         }
-        
+
         // Paginate the results
         $students = $query->paginate(10);
-        
+
         // Return the paginated results
         return $students;
     }
@@ -72,12 +72,12 @@ class AllStudentController extends Controller
     {
         // Initialize the query builder for the AddStudent model and filter by student_type
         $query = AddStudent::where('student_type', 'teacher_type');
-        
+
         // Join the users table and select the name column
         $query->join('users', 'add_students.user_id', '=', 'users.id')
             ->select('add_students.*', 'users.name as user_name');
-        
-        // Apply filters conditionally 
+
+        // Apply filters conditionally
         if ($request->has('date') && !empty($request->date)) {
             $query->where('add_students.dob', 'like', "%{$request->date}%");
         }
@@ -90,10 +90,10 @@ class AllStudentController extends Controller
         if ($request->has('category') && !empty($request->category)) {
             $query->orWhere('add_students.category_id', 'like', "%{$request->category}%");
         }
-        
+
         // Paginate the results
         $students = $query->paginate(10);
-        
+
         // Return the paginated results
         return $students;
     }
@@ -167,5 +167,5 @@ class AllStudentController extends Controller
 
 
 
-    
+
 }
