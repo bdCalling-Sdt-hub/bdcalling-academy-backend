@@ -43,4 +43,10 @@ class WebsiteController extends Controller
         return response()->json(['data' => $filter_course]);
     }
 
+//    most popular course
+//    public function popularCourses(Request $request)
+//    {
+//        return $query = Batch::with('course.course_category', 'course.course_module.videos', 'teachers','course')->get();
+//    }
+
 }
