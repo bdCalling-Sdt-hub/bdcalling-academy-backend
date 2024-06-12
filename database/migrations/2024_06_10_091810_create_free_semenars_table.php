@@ -11,19 +11,22 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('attendances', function (Blueprint $table) {
+        Schema::create('free_semenars', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('batch_id');
-            $table->foreignId('student_id')->constrained()->onDelete('cascade');
-            $table->date('date');
-            $table->boolean('is_present');
-            $table->string('attendance_by')->nullable();
+            $table->string('name');
+            $table->string('email');
+            $table->string('phone');
+            $table->string('category');
+            $table->string('address');
             $table->timestamps();
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
-        Schema::dropIfExists('attendances');
+        Schema::dropIfExists('free_semenars');
     }
 };
