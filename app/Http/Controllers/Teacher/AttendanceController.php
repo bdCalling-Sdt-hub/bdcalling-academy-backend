@@ -22,7 +22,7 @@ class AttendanceController extends Controller
             'date' => 'required|date',
             'attendance_by' => 'required|integer', // Assuming this is the teacher's ID
             'attendances' => 'required|array',
-            'attendances.*.add_student_id' => 'required|integer',
+            'attendances.*.student_id' => 'required|integer',
             'attendances.*.is_present' => 'required|boolean',
         ]);
 
@@ -32,7 +32,7 @@ class AttendanceController extends Controller
             Attendance::updateOrCreate(
                 [
                     'batch_id' => $validatedData['batch_id'],
-                    'add_student_id' => $attendanceData['add_student_id'],
+                    'student_id' => $attendanceData['student_id'],
                     'date' => $validatedData['date']
                 ],
                 [

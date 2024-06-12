@@ -29,4 +29,9 @@ class Order extends Model
     {
         return $this->belongsTo(Batch::class);
     }
+
+    public function getInstallmentDateAttribute($value)
+    {
+        return json_decode($value);
+    }
 }
