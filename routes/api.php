@@ -43,6 +43,7 @@ use App\Http\Controllers\Api\Student\StudentDashbordController;
 use App\Http\Controllers\Api\Student\QuizeController;
 
 use App\Http\Controllers\Api\WebApi\FreSemenarController;
+use App\Http\Controllers\WalletController;
 use App\Http\Controllers\WebsiteController;
 use Illuminate\Support\Facades\Route;
 
@@ -132,15 +133,15 @@ Route::delete('/contacts/{id}', [ContactUsController::class, 'destroy']);
 
 // --------------- Join free semenar -------------------- //
 
-Route::post('/store-semenar', [FreSemenarController::class, 'store']); 
-Route::get('/show-semenar', [FreSemenarController::class, 'show_semenar']);  
-Route::get('/destry-semenar/{id}', [FreSemenarController::class, 'destroy']);  
+Route::post('/store-semenar', [FreSemenarController::class, 'store']);
+Route::get('/show-semenar', [FreSemenarController::class, 'show_semenar']);
+Route::get('/destry-semenar/{id}', [FreSemenarController::class, 'destroy']);
 
 // ------------------ Subscriber ----------------------- //
 
-Route::post('/store-subscriber', [FreSemenarController::class, 'subscrib_store']); 
-Route::get('/show-subscriber', [FreSemenarController::class, 'show_subscriber']);  
-Route::get('/destry-subscriber/{id}', [FreSemenarController::class, 'destroy_subscriber']);  
+Route::post('/store-subscriber', [FreSemenarController::class, 'subscrib_store']);
+Route::get('/show-subscriber', [FreSemenarController::class, 'show_subscriber']);
+Route::get('/destry-subscriber/{id}', [FreSemenarController::class, 'destroy_subscriber']);
 
 
 Route::middleware(['super.admin'])->group(function (){
@@ -169,8 +170,12 @@ Route::middleware(['super.admin'])->group(function (){
     Route::get('show-module',[ModuleController::class,'showModule']);
 
     //==================== Quize ==============================//
-    //student and super admin show quize// 
+    //student and super admin show quize//
     Route::resource('quize',QuizeController::class);
+
+    //===================== Wallet =============================
+
+    Route::get('/earnings',[WalletController::class,'earning']);
 
 });
 
@@ -208,8 +213,6 @@ Route::post('/send-sms',[SendSMScontroller::class,'send_sms']);
 //==============================Sync Batch======================================
 Route::post('/batch-teachers',[BatchSyncController::class,'syncBatch']);
 
-//============================= Student =====================================
-Route::resource('/students',StudentController::class)->except('create','edit');
 
 
 Route::post('/admit-student',[AdmitController::class,'admitStudent']);
@@ -269,5 +272,6 @@ Route::middleware(['student.admin'])->group(function (){
 });
 
 Route::middleware(['mentor.admin'])->group(function (){
-
+    //============================= Student =====================================
+    Route::resource('/students',StudentController::class)->except('create','edit');
 });

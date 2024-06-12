@@ -42,4 +42,6 @@ class Student extends Model
     {
         return $this->hasOne(Mark::class);
     }
+
+
 }

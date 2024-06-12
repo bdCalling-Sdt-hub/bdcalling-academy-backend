@@ -10,6 +10,7 @@ class AllStudentController extends Controller
 
     public function Show_all_student(Request $request)
     {
+
         $registration_date = $request->get('registration_date');
         $name = $request->get('name');
         $phone_number = $request->get('phone_number');
@@ -20,6 +21,7 @@ class AllStudentController extends Controller
     
         if (!empty($registration_date)) {
             $query->where('registration_date', $registration_date);
+
         }
     
         if (!empty($name)) {
@@ -37,16 +39,19 @@ class AllStudentController extends Controller
                 $query->where('category_id', 'like', '%' . $category_name . '%');
             });
         }
+
     
         // if (!empty($batch_id)) {
         //     $query->where('batch_id', 'like', '%' . $batch_id . '%');
         // }
     
         return $query->paginate(10);
+
     }
 
     public function auth_type_student(Request $request)
     {
+
         $registration_date = $request->get('registration_date');
         $name = $request->get('name');
         $phone_number = $request->get('phone_number');
@@ -56,6 +61,7 @@ class AllStudentController extends Controller
     
         if (!empty($registration_date)) {
             $query->where('registration_date', $registration_date);
+
         }
     
         if (!empty($name)) {
@@ -69,6 +75,7 @@ class AllStudentController extends Controller
         }
     
         return $query->paginate(10);
+
     }
 
     public function teacher_type_student(Request $request)
@@ -197,5 +204,5 @@ class AllStudentController extends Controller
 
 
 
-    
+
 }
