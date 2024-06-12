@@ -35,7 +35,7 @@ class ModuleController extends Controller
                 "module_title" => strtolower($request->module_title),
                 "created_by" => $request->created_by,
                 "module_no" => (string)($courseModules->count() + 1),
-                "module_class" => $request->module_class,
+//                "module_class" => $request->module_class,
             ]);
 
             // Decode the module_class JSON
@@ -88,7 +88,7 @@ class ModuleController extends Controller
             $module->module_title = strtolower($request->module_title);
             $module->module_no = $request->module_no ?? $module->module_no;
             $module->created_by = $request->created_by ?? $module->created_by;
-            $module->module_class = $request->module_class ?? $module->module_class;
+//            $module->module_class = $request->module_class ?? $module->module_class;
             $module->save();
 
             $videos = json_decode($request->module_class, true);

@@ -4,13 +4,19 @@ use App\Http\Controllers\AddEmployeeController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Batch\BatchSyncController;
 use App\Http\Controllers\Calculation\CostController;
+use App\Http\Controllers\FollowUpController;
 use App\Http\Controllers\ModuleController;
+use App\Http\Controllers\PaymentSslcommerzeController;
 use App\Http\Controllers\RBatchController;
 use App\Http\Controllers\RCategoryController;
 use App\Http\Controllers\RCourseController;
+use App\Http\Controllers\SslCommerzPaymentController;
 use App\Http\Controllers\Student\AdmitController;
 use App\Http\Controllers\Student\StudentController;
 use App\Http\Controllers\Student\StudentPaymentController;
+use App\Http\Controllers\Teacher\FeedbackController;
+use App\Http\Controllers\Teacher\MarkController;
+use App\Http\Controllers\Teacher\RAssignmentController;
 use App\Http\Controllers\Teacher\RoutineController;
 use App\Http\Controllers\Teacher\RTeacherController;
 use App\Http\Controllers\Teacher\TeacherDashboardController;
@@ -37,6 +43,7 @@ use App\Http\Controllers\Api\Student\StudentDashbordController;
 use App\Http\Controllers\Api\Student\QuizeController;
 
 use App\Http\Controllers\Api\WebApi\FreSemenarController;
+use App\Http\Controllers\WebsiteController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -57,15 +64,8 @@ Route::group([
     Route::post('/resend-otp', [AuthController::class, 'resendOtp']);
 });
 
-
 Route::resource('categories',RCategoryController::class)->except('create','edit');
 Route::resource('courses',RCourseController::class)->except('create','edit');
-
-
-
-//teacher add
-
-//create - batch
 
 
 Route::get('do-awesome-service',[TestController::class,'doAwesome']);
@@ -152,7 +152,6 @@ Route::middleware(['super.admin'])->group(function (){
     Route::get('approve-leave-application',[RTeacherController::class,'approveLeaveRequest']);
     Route::get('reject-leave-application',[RTeacherController::class,'rejectLeaveRequest']);
 
-
     //====================== Manage Admins / Super admins ====================================
     Route::resource('admins',AddEmployeeController::class)->except('create','edit');
     Route::get('show-super-admin',[AddEmployeeController::class,'showSuperAdmin']);
@@ -189,6 +188,8 @@ Route::middleware(['student'])->group(function (){
     Route::get('/show-quize-student/{id}', [StudentDashbordController::class, 'show_quize']);
     Route::post('/examination-test', [StudentDashbordController::class, 'exam_test_ans']);
 
+    //============================ Student Dashboard ===========================
+    Route::get('/show-student-feedback',[FeedbackController::class,'showFeedback']);
 });
 Route::resource('routines',RoutineController::class)->except('create','edit');
 
@@ -202,13 +203,10 @@ Route::post('/teacher-payments',[TeacherPaymentController::class,'teacherPayment
 Route::post('/teacher-payments-update/{id}',[TeacherPaymentController::class,'teacherPaymentUpdate']);
 Route::get('/show-transactions',[TeacherPaymentController::class,'showAllTransactionByTeacher']);
 
-
-
 Route::post('/send-sms',[SendSMScontroller::class,'send_sms']);
 
 //==============================Sync Batch======================================
 Route::post('/batch-teachers',[BatchSyncController::class,'syncBatch']);
-
 
 //============================= Student =====================================
 Route::resource('/students',StudentController::class)->except('create','edit');
@@ -221,9 +219,55 @@ Route::get('/show-admit-student',[AdmitController::class,'showAdmitStudent']);
 Route::post('/student-payment',[StudentPaymentController::class,'admittedPayment']);
 Route::get('/show-student-payment',[StudentPaymentController::class,'showSingleStudentPaymentHistory']);
 
-//-------------------------- Notificatins------------------- //
+//============================Student Feedback=========================================
+Route::resource('/feedbacks',FeedbackController::class)->except('edit','create');
+
+
+///====================== Website Api's =========================================
+
+Route::get('/filter-courses',[WebsiteController::class,'filterCourse']);
+Route::get('/popular-courses',[WebsiteController::class,'popularCourses']);
+
+//==========================Student Mark Assign========================
+Route::post('/assign-mark',[MarkController::class,'studentMark']);
+Route::post('/assign-mark/{id}',[MarkController::class,'updateStudentMark']);
+Route::get('/show-assign-mark',[MarkController::class,'showStudentMark']);
+
+
+//-------------------------- Notificatins ------------------- //
 
 Route::get('/show-notification',[NotificationsController::class,'notifications']);
 Route::post('/mark-as-read/{id}',[NotificationsController::class,'markAsRead']);
 
 Route::get('/delete-notification/{id}',[NotificationsController::class,'destroy']);
+
+
+Route::resource('/assignments', RAssignmentController::class)->except('create','edit');
+
+//================================ Follow Up Message ===================================
+Route::post('/follow-up-message',[FollowUpController::class,'followUpMessage']);
+
+
+//====================================Payment =========================================
+
+//sslcommerze payment route
+Route::post('/pay', [PaymentSslcommerzeController::class, 'index']);
+Route::post('/coupon-discount', [PaymentSslcommerzeController::class, 'discountCouponCode']);
+Route::post('/success', [PaymentSslcommerzeController::class, 'success']);
+Route::post('/fail', [PaymentSslcommerzeController::class, 'fail']);
+Route::post('/cancel', [PaymentSslcommerzeController::class, 'cancel']);
+Route::post('/ipn', [PaymentSslcommerzeController::class, 'ipn']);
+
+
+
+Route::middleware(['admin'])->group(function (){
+
+});
+
+Route::middleware(['student.admin'])->group(function (){
+
+});
+
+Route::middleware(['mentor.admin'])->group(function (){
+
+});

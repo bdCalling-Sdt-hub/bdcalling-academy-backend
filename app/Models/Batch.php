@@ -37,11 +37,6 @@ class Batch extends Model
     {
         return $this->hasMany(AddStudent::class);
     }
-//
-//    public function users():BelongsToMany
-//    {
-//        return $this->belongsToMany(User::class, 'batch_teachers', 'batch_id', 'user_id');
-//    }
 
     public function teachers():BelongsToMany
     {
@@ -62,5 +57,14 @@ class Batch extends Model
     public function student():HasOne
     {
         return $this->hasOne(Student::class);
+    }
+
+//    public function batch():HasOne
+//    {
+//        return $this->hasOne(Batch::class);
+//    }
+    public function assignment():HasOne
+    {
+        return $this->hasOne(Batch::class);
     }
 }

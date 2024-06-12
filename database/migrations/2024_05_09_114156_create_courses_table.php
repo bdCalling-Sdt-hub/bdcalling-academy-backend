@@ -23,10 +23,10 @@ return new class extends Migration
             $table->string('skill_Level');
             $table->string('address')->nullable();
             $table->string('thumbnail');
-            $table->string('career_opportunities');
-            $table->string('curriculum');
-            $table->string('tools');
-            $table->string('job_position');
+            $table->json('career_opportunities');
+            $table->json('curriculum');
+            $table->json('tools');
+            $table->json('job_position');
             $table->boolean('popular_section');
             $table->string('status');
             $table->string('course_type');
