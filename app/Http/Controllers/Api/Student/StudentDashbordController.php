@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Models\Quize;
 use App\Models\Anseware;
 use App\Models\Attendance;
+use App\Models\Batch;
 class StudentDashbordController extends Controller
 {
     public function counting_student_info()
@@ -17,8 +18,8 @@ class StudentDashbordController extends Controller
          $check_student = Student::where('user_id', $auth)->pluck('id');        
          $complete_class = Attendance::whereIn('student_id', $check_student)->count();
          $complete_course = Student::where('user_id',$auth)->where('status','complet')->count();
-         $payment =  Order::where('user_id',$auth)->sum('amount');
-         $course_fee = Order::where('user_id',$auth)->sum('course_fee');
+         $payment =  Order::where('student_id',$auth)->sum('amount');
+         $course_fee = Order::where('student_id',$auth)->sum('course_fee');
          $due = $course_fee - $payment;
 
          return response()->json([
@@ -33,8 +34,11 @@ class StudentDashbordController extends Controller
     public function all_course()
     {
         $userId = auth()->user()->id;
-        $orderCourses = Order::where('user_id', $userId)->pluck('course_id');
-        $courses = Course::whereIn('id', $orderCourses)->get();
+        $student_check = Student::where('user_id', $userId)->first();
+        $student_id = $student_check->id;
+
+        $orderCourses = Order::where('student_id', $student_id)->pluck('batch_id');
+        $courses = Batch::whereIn('id', $orderCourses)->with('course')->get();
         if($courses){
             return response()->json(['status'=>'success','data'=>$courses], 200);
         }
