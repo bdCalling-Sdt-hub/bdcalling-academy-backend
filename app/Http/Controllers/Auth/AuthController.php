@@ -83,10 +83,7 @@ class AuthController extends Controller
             return response()->json([
                 'message' => 'Please check your email to verify your account',
             ]);
-
         }
-
-
     }
 
     public function login(LoginRequest $request)

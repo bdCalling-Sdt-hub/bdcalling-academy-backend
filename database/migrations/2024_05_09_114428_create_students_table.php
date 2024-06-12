@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('blood_group')->nullable();
             $table->text('address')->nullable();
             $table->string('add_by')->nullable();
-            $table->string('student_type')->nullable();
+            $table->string('student_type')->default('auth');
             $table->string('image')->nullable();
             $table->timestamps();
         });

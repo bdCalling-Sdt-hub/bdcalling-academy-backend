@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\FollowUpRequest;
 use App\Models\Student;
 use App\Notifications\FollowUpMessage;
-use Illuminate\Http\Request;
 
 class FollowUpController extends Controller
 {
@@ -31,5 +30,4 @@ class FollowUpController extends Controller
             'phone_numbers' => $students->pluck('phone_number')
         ], 200);
     }
-
 }
