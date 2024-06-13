@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('batch_id');
             $table->foreignId('student_id');
+            $table->string('status');
             $table->timestamps();
         });
     }

@@ -217,6 +217,8 @@ Route::post('/batch-teachers',[BatchSyncController::class,'syncBatch']);
 
 Route::post('/admit-student',[AdmitController::class,'admitStudent']);
 Route::get('/show-admit-student',[AdmitController::class,'showAdmitStudent']);
+Route::get('/dropout-student',[AdmitController::class,'dropOutStudent']);
+Route::get('/show-dropout-student',[AdmitController::class,'showDropOutStudent']);
 
 //=================================Student Payment======================================
 Route::post('/student-payment',[StudentPaymentController::class,'admittedPayment']);
