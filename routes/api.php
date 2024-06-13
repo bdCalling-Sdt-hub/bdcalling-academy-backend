@@ -270,7 +270,7 @@ Route::middleware(['admin','auth:api'])->group(function (){
 });
 
 
-Route::middleware(['student.admin'])->group(function (){
+Route::middleware(['student.admin','auth:api'])->group(function (){
     Route::get('/show-quize-student/{id}', [StudentDashbordController::class, 'show_quize']);
 });
 
