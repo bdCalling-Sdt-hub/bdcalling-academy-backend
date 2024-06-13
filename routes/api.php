@@ -91,7 +91,7 @@ Route::get('/singel/addmit/student/{id}', [AdmittedController::class, 'singel_ad
 Route::post('/dropout/addmit/student', [AdmittedController::class, 'dropout_student']);
 Route::get('/show/dropout/student', [DropoutStudentController::class, 'show_dropout_student']);
 Route::post('/refund', [DropoutStudentController::class, 'store_refund']);
-Route::get('/show-event-student', [AllStudentController::class, 'show_dropout_student']);
+Route::get('/show-event-student', [AllStudentController::class, 'event_type_student']);
 
 // ========================= Add student ============== //
 
@@ -190,7 +190,7 @@ Route::middleware(['student'])->group(function (){
     Route::get('/student-counting', [StudentDashbordController::class, 'counting_student_info']);
     Route::get('/all-course', [StudentDashbordController::class, 'all_course']);
     Route::get('/course-modul-video/{id}', [StudentDashbordController::class, 'course_modul_video']);
-    Route::get('/show-quize-student/{id}', [StudentDashbordController::class, 'show_quize']);
+   
     Route::post('/examination-test', [StudentDashbordController::class, 'exam_test_ans']);
 
     //============================ Student Dashboard ===========================
@@ -269,6 +269,7 @@ Route::middleware(['admin','auth:api'])->group(function (){
 
 Route::middleware(['student.admin','auth:api'])->group(function (){
 
+    Route::get('/show-quize-student/{id}', [StudentDashbordController::class, 'show_quize']);
 });
 
 Route::middleware(['mentor.admin','auth:api'])->group(function (){
