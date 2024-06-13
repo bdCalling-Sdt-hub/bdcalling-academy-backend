@@ -55,7 +55,7 @@ Route::group([
 ], function ($router) {
     Route::post('/register', [AuthController::class, 'register']);
     Route::get('/email-verified/{token}', [AuthController::class, 'emailVerified'])->name('verify.email');
-    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:login');
     Route::get('/profile', [AuthController::class, 'loggedUserData']);
     Route::post('/forget-pass', [AuthController::class, 'forgetPassword']);
     Route::post('/verified-checker', [AuthController::class, 'emailVerifiedForResetPass']);
@@ -144,7 +144,7 @@ Route::get('/show-subscriber', [FreSemenarController::class, 'show_subscriber'])
 Route::get('/destry-subscriber/{id}', [FreSemenarController::class, 'destroy_subscriber']);
 
 
-Route::middleware(['super.admin'])->group(function (){
+Route::middleware(['super.admin','auth:api'])->group(function (){
 
     //====================== Super Admin Teacher ============================
     Route::resource('teachers',RTeacherController::class)->except('create','edit');
@@ -263,15 +263,15 @@ Route::post('/ipn', [PaymentSslcommerzeController::class, 'ipn']);
 
 
 
-Route::middleware(['admin'])->group(function (){
+Route::middleware(['admin','auth:api'])->group(function (){
 
 });
 
-Route::middleware(['student.admin'])->group(function (){
+Route::middleware(['student.admin','auth:api'])->group(function (){
 
 });
 
-Route::middleware(['mentor.admin'])->group(function (){
+Route::middleware(['mentor.admin','auth:api'])->group(function (){
     //============================= Student =====================================
     Route::resource('/students',StudentController::class)->except('create','edit');
 });
