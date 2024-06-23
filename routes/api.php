@@ -7,6 +7,7 @@ use App\Http\Controllers\Calculation\CostController;
 use App\Http\Controllers\FollowUpController;
 use App\Http\Controllers\ModuleController;
 use App\Http\Controllers\PaymentSslcommerzeController;
+use App\Http\Controllers\PhoenixStudentController;
 use App\Http\Controllers\RBatchController;
 use App\Http\Controllers\RCategoryController;
 use App\Http\Controllers\RCourseController;
@@ -269,7 +270,6 @@ Route::middleware(['admin','auth:api'])->group(function (){
 
 });
 
-
 Route::middleware(['student.admin','auth:api'])->group(function (){
     Route::get('/show-quize-student/{id}', [StudentDashbordController::class, 'show_quize']);
 });
@@ -278,3 +278,10 @@ Route::middleware(['mentor.admin','auth:api'])->group(function (){
     //============================= Student =====================================
     Route::resource('/students',StudentController::class)->except('create','edit');
 });
+
+
+//Phoenix Batch Student
+Route::post('/admit-phoenix-student',[PhoenixStudentController::class,'admitPhoenixStudent']);
+Route::post('/update-phoenix-student/{id}',[PhoenixStudentController::class,'updatePhoenixStudent']);
+Route::get('/destroy-phoenix-student/{id}',[PhoenixStudentController::class,'destroyPhoenixStudent']);
+Route::post('/application-phoenix',[PhoenixStudentController::class,'applicationForPhoenixBatch']);

@@ -10,8 +10,6 @@ use App\Models\BatchStudent;
 use App\Models\Student;
 use Illuminate\Http\Request;
 
-//use Illuminate\Support\Facades\Request;
-
 class AdmitController extends Controller
 {
     public function admitStudent(AdmitRequest $request)
@@ -44,7 +42,7 @@ class AdmitController extends Controller
         $category_name = $request->filled('category_name');
         $batch_id = $request->filled('batch_id');
 
-        $query = Batch::with(['students.user', 'course.course_category'])->where('status','enrolled')
+        $query = Batch::with(['students.user', 'course.course_category'])
             ->has('students');
 
         if ($registration_date) {
@@ -101,8 +99,8 @@ class AdmitController extends Controller
         $category_name = $request->filled('category_name');
         $batch_id = $request->filled('batch_id');
 
-        $query = Batch::with(['students.user', 'course.course_category'])->where('status','dropout')
-            ->has('students');
+        $query = Batch::with(['students.user', 'course.course_category'])
+            ->has('students')->first();
 
         if ($registration_date) {
             $query->whereHas('students', function ($query) use ($registration_date) {
