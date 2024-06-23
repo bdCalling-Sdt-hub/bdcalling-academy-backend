@@ -10,6 +10,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Request;
 
 class PhoenixStudentController extends Controller
 {
@@ -132,6 +133,10 @@ class PhoenixStudentController extends Controller
             DB::rollback();
             return response()->json(['message' => 'Failed to delete student', 'error' => $e->getMessage()], 500);
         }
+    }
+    public function applicationForPhoenixBatch(Request $request)
+    {
+
     }
 
 
