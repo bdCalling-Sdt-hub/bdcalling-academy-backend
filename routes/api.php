@@ -284,3 +284,4 @@ Route::middleware(['mentor.admin','auth:api'])->group(function (){
 Route::post('/admit-phoenix-student',[PhoenixStudentController::class,'admitPhoenixStudent']);
 Route::post('/update-phoenix-student/{id}',[PhoenixStudentController::class,'updatePhoenixStudent']);
 Route::get('/destroy-phoenix-student/{id}',[PhoenixStudentController::class,'destroyPhoenixStudent']);
+Route::post('/application-phoenix',[PhoenixStudentController::class,'applicationForPhoenixBatch']);
