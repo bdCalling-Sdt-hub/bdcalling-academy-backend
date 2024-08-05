@@ -16,7 +16,7 @@ class PaymentRequest extends FormRequest
     {
         return [
                 'teacher_id' => 'required',
-                'course_module_id' => 'required',
+                'course_module_id' => 'nullable',
                 'payment_type' => 'required|string',
                 'amount' => 'required|regex:/^\d+(\.\d{1,2})?$/',
                 'payment_date' => 'required|date_format:Y-m-d',

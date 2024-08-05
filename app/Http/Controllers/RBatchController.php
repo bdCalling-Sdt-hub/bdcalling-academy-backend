@@ -14,11 +14,11 @@ class RBatchController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Batch::with('teachers.user');
+        $query = Batch::with('course')->where('batch_id', 'not like', 'Phoenix%');
         if ($request->has('batch_name')) {
             $query->where('batch_name', 'like', '%' . $request->input('batch_name') . '%');
         }
-        $batches = $query->paginate(9);
+        $batches = $query->paginate(12);
         return response()->json(['message' => 'Batch List', 'data' => $batches]);
     }
 
@@ -34,7 +34,6 @@ class RBatchController extends Controller
                     'message' => 'Course does not exist',
                 ], 404);
             }
-
             $batch = new Batch();
             $batch->batch_id = $this->createBatch($course_id, $batch_type);
             $batch->course_id = $course_id;
@@ -46,7 +45,6 @@ class RBatchController extends Controller
             $batch->image = saveImage($request,'image');
             $batch->discount_price = $request->discount_price ?? null;
             $batch->save();
-
             $teacher_ids = json_decode($request->teacher_id,true);
 
             foreach ($teacher_ids as $index => $teacher_id) {
@@ -95,7 +93,7 @@ class RBatchController extends Controller
     public function show(string $id)
     {
         try {
-            $batch = Batch::find($id);
+            $batch = Batch::with('course','teachers')->find($id);
             if (!$batch) {
                 return response()->json([
                     'message' => 'Batch not found',
@@ -154,7 +152,7 @@ class RBatchController extends Controller
                 foreach ($teacher_ids as $index => $teacher_id) {
                     $teacher_batch = new BatchTeacher();
                     $teacher_batch->batch_id = $batch->id;
-                    $teacher_batch->user_id = $teacher_id;
+                    $teacher_batch->teacher_id = $teacher_id;
                     $teacher_batch->save();
                 }
             }
@@ -201,5 +199,18 @@ class RBatchController extends Controller
                 'message' => 'An error occurred while deleting the batch',
             ], 500);
         }
+    }
+
+    public function teacherBatch()
+    {
+        $teacher_id = auth()->user()->teacher->id;
+        if (!$teacher_id){
+            return response()->json(['message' => 'Unauthorized Teacher'], 404);
+        }
+        $batch = BatchTeacher::where('teacher_id',$teacher_id)->get();
+        $filter_batch = $batch->map(function ($item){
+            return $item->batch;
+        });
+        return response()->json($filter_batch);
     }
 }

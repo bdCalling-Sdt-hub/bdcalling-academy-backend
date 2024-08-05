@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AddEmployeeController;
+use App\Http\Controllers\Api\Student\QuizeController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Batch\BatchSyncController;
 use App\Http\Controllers\Calculation\CostController;
@@ -8,6 +9,7 @@ use App\Http\Controllers\FollowUpController;
 use App\Http\Controllers\ModuleController;
 use App\Http\Controllers\PaymentSslcommerzeController;
 use App\Http\Controllers\PhoenixStudentController;
+use App\Http\Controllers\PhoenixBatchController;
 use App\Http\Controllers\RBatchController;
 use App\Http\Controllers\RCategoryController;
 use App\Http\Controllers\RCourseController;
@@ -15,6 +17,8 @@ use App\Http\Controllers\SslCommerzPaymentController;
 use App\Http\Controllers\Student\AdmitController;
 use App\Http\Controllers\Student\StudentController;
 use App\Http\Controllers\Student\StudentPaymentController;
+use App\Http\Controllers\StudentDashboard\SStudentController;
+use App\Http\Controllers\SuperAdmin\QuizController;
 use App\Http\Controllers\Teacher\FeedbackController;
 use App\Http\Controllers\Teacher\MarkController;
 use App\Http\Controllers\Teacher\RAssignmentController;
@@ -41,7 +45,6 @@ use App\Http\Controllers\Api\SuperAdmin\ReviewController;
 use App\Http\Controllers\Api\SuperAdmin\IncludeCostController;
 use App\Http\Controllers\Api\SuperAdmin\DashboardController;
 use App\Http\Controllers\Api\Student\StudentDashbordController;
-use App\Http\Controllers\Api\Student\QuizeController;
 
 use App\Http\Controllers\Api\WebApi\FreSemenarController;
 use App\Http\Controllers\WalletController;
@@ -56,7 +59,8 @@ Route::group([
 ], function ($router) {
     Route::post('/register', [AuthController::class, 'register']);
     Route::get('/email-verified/{token}', [AuthController::class, 'emailVerified'])->name('verify.email');
-    Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:login');
+//    Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:login');
+    Route::post('/login', [AuthController::class, 'login']);
     Route::get('/profile', [AuthController::class, 'loggedUserData']);
     Route::post('/forget-pass', [AuthController::class, 'forgetPassword']);
     Route::post('/verified-checker', [AuthController::class, 'emailVerifiedForResetPass']);
@@ -147,12 +151,16 @@ Route::get('/destry-subscriber/{id}', [FreSemenarController::class, 'destroy_sub
 
 Route::middleware(['super.admin','auth:api'])->group(function (){
 
+
+    //===================== Show Batch wise teacher--------------------
+    Route::get('/show-assign-module',[RTeacherController::class,'showAssignModule']);
+
     //====================== Super Admin Teacher ============================
     Route::resource('teachers',RTeacherController::class)->except('create','edit');
 
     Route::get('admin-show-leave-application',[RTeacherController::class,'showLeaveApplication']);
-    Route::get('approve-leave-application',[RTeacherController::class,'approveLeaveRequest']);
-    Route::get('reject-leave-application',[RTeacherController::class,'rejectLeaveRequest']);
+    Route::post('approve-leave-application',[RTeacherController::class,'approveLeaveRequest']);
+    Route::post('reject-leave-application',[RTeacherController::class,'rejectLeaveRequest']);
 
     //====================== Manage Admins / Super admins ====================================
     Route::resource('admins',AddEmployeeController::class)->except('create','edit');
@@ -162,17 +170,15 @@ Route::middleware(['super.admin','auth:api'])->group(function (){
     Route::post('add-teacher-salary',[CostController::class,'addTeacherSalary']);
 
     //====================== batch ==================================
-    Route::resource('batches',RBatchController::class);
-
-    // =========================add module =============================
-    Route::post('add-module',[ModuleController::class,'addModule']);
-    Route::post('update-module/{id}',[ModuleController::class,'updateModule']);
-
-    Route::get('show-module',[ModuleController::class,'showModule']);
+    Route::resource('batches',RBatchController::class)->except('create','edit');
+    Route::resource('phoenix-batches',PhoenixBatchController::class);
+    Route::get('show-phoenix-students',[PhoenixStudentController::class,'showPhoenixStudent']);
 
     //==================== Quize ==============================//
     //student and super admin show quize//
     Route::resource('quize',QuizeController::class);
+
+    Route::post('update-quiz',[QuizController::class,'ModuleWiseQuizUpdate']);
 
     //===================== Wallet =============================
 
@@ -181,6 +187,10 @@ Route::middleware(['super.admin','auth:api'])->group(function (){
 });
 
 Route::middleware(['mentor','auth:api'])->group(function (){
+
+    Route::get('teacher-batch',[RBatchController::class,'teacherBatch']);
+
+    Route::get('teacher-base-student',[TeacherDashboardController::class,'teacherBaseStudent']);
 
     //===================== Trainer Dashboard ================================
     Route::post('request-leave-application',[TeacherDashboardController::class,'requestLeaveApplication']);
@@ -196,12 +206,14 @@ Route::middleware(['student'])->group(function (){
 
     //============================ Student Dashboard ===========================
     Route::get('/show-student-feedback',[FeedbackController::class,'showFeedback']);
+
+
+    //enrolled courses
+    Route::get('/enrolled-courses', [SStudentController::class, 'enrolledCourses']);
+
+
 });
-Route::resource('routines',RoutineController::class)->except('create','edit');
 
-
-//==============================Attendance=====================================
-Route::resource('attendances',AttendanceController::class)->except('create','edit');
 
 
 //============================== Teachers Payment ========================================================
@@ -214,10 +226,9 @@ Route::post('/send-sms',[SendSMScontroller::class,'send_sms']);
 //==============================Sync Batch======================================
 Route::post('/batch-teachers',[BatchSyncController::class,'syncBatch']);
 
-
-
 Route::post('/admit-student',[AdmitController::class,'admitStudent']);
-Route::get('/show-admit-student',[AdmitController::class,'showAdmitStudent']);
+
+Route::get('/show-admit-student/v2',[AdmitController::class,'showAdmitStudentV2']);
 Route::get('/dropout-student',[AdmitController::class,'dropOutStudent']);
 Route::get('/show-dropout-student',[AdmitController::class,'showDropOutStudent']);
 
@@ -248,7 +259,7 @@ Route::post('/mark-as-read/{id}',[NotificationsController::class,'markAsRead']);
 Route::get('/delete-notification/{id}',[NotificationsController::class,'destroy']);
 
 
-Route::resource('/assignments', RAssignmentController::class)->except('create','edit');
+
 
 //================================ Follow Up Message ===================================
 Route::post('/follow-up-message',[FollowUpController::class,'followUpMessage']);
@@ -277,6 +288,28 @@ Route::middleware(['student.admin','auth:api'])->group(function (){
 Route::middleware(['mentor.admin','auth:api'])->group(function (){
     //============================= Student =====================================
     Route::resource('/students',StudentController::class)->except('create','edit');
+
+    Route::resource('routines',RoutineController::class)->except('create','edit');
+
+    Route::resource('attendances',AttendanceController::class)->except('create','edit');
+
+    Route::get('/show-admit-student',[AdmitController::class,'showAdmitStudent']);
+
+    // =========================add module =============================
+    Route::post('add-module',[ModuleController::class,'addModule']);
+
+    Route::get('show-module',[ModuleController::class,'showModule']);
+
+    Route::post('update-module/{id}',[ModuleController::class,'updateModule']);
+
+    Route::post('update-module-video/{id}',[ModuleController::class,'updateModuleVideo']);
+
+
+    Route::get('show-module/{id}',[ModuleController::class,'getSingleModule']);
+
+    //Assignment
+
+    Route::resource('/assignments', RAssignmentController::class)->except('create','edit');
 });
 
 

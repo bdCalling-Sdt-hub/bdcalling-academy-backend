@@ -3,80 +3,45 @@
 namespace App\Http\Controllers\Api\SuperAdmin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Student;
 use App\Models\SuccessStory;
 use App\Models\AddStudent;
 use Illuminate\Http\Request;
 
 class SuccessStoryController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index(Request $request)
+
+    public function index()
     {
-         // Initialize the query builder for the AddStudent model and filter by status
-         $query = AddStudent::where('status', 'complet')
-         ->with(['user', 'batch', 'course']);
-
-        // Apply filters conditionally
-        if ($request->filled('date')) {
-        $query->where('dob', 'like', "%{$request->date}%");
-        }
-
-        // Using where and orWhere properly
-        if ($request->filled('id')) {
-        $query->where(function($q) use ($request) {
-            $q->where('id', 'like', "%{$request->id}%");
-        });
-        }
-
-        if ($request->filled('phone')) {
-        $query->where(function($q) use ($request) {
-            $q->where('phone', 'like', "%{$request->phone}%");
-        });
-        }
-
-        // Paginate the results
-        $students = $query->paginate(10);
-
-        // Return the paginated results
-        return response()->json($students);
+         return response()->json(SuccessStory::paginate(8));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        // $_REQUEST['name'];
         $input = $request->all();
 
-        // THE UPLOAD DESTINATION - CHANGE THIS TO YOUR OWN
+        // The upload destination - change this to your own
+        $uploadDir = storage_path('app/public/upload/video');
 
-        $filePath = storage_path('app/public/upload/video');
-
-        if (!file_exists($filePath)) {
-            if (!mkdir($filePath, 0777, true)) {
-                return response()->json(['ok' => 0, 'info' => "Failed to create $filePath"]);
+        if (!file_exists($uploadDir)) {
+            if (!mkdir($uploadDir, 0777, true)) {
+                return response()->json(['ok' => 0, 'info' => "Failed to create $uploadDir"]);
             }
         }
 
         $fileName = isset($_REQUEST['name']) ? $_REQUEST['name'] : $_FILES['file']['name'];
-        $filePath = $filePath . DIRECTORY_SEPARATOR . $fileName;
+        $finalFilePath = $uploadDir . DIRECTORY_SEPARATOR . $fileName;
 
-        // DEAL WITH CHUNKS
-
+        // Deal with chunks
         $chunk = isset($_REQUEST['chunk']) ? intval($_REQUEST['chunk']) : 0;
         $chunks = isset($_REQUEST['chunks']) ? intval($_REQUEST['chunks']) : 0;
-        $out = fopen("{$filePath}.part", $chunk == 0 ? 'wb' : 'ab');
+        $tempFilePath = "{$finalFilePath}.part";
+        $out = fopen($tempFilePath, $chunk == 0 ? 'wb' : 'ab');
 
         if ($out) {
             $in = fopen($_FILES['file']['tmp_name'], 'rb');
@@ -85,28 +50,30 @@ class SuccessStoryController extends Controller
                 while ($buff = fread($in, 4096)) {
                     fwrite($out, $buff);
                 }
+                fclose($in);
             } else {
                 return response()->json(['ok' => 0, 'info' => 'Failed to open input stream']);
             }
 
-            fclose($in);
             fclose($out);
             unlink($_FILES['file']['tmp_name']);
+        } else {
+            return response()->json(['ok' => 0, 'info' => 'Failed to open output stream']);
         }
 
-        // CHECK IF THE FILE HAS BEEN UPLOADED
-
+        // Check if the file has been completely uploaded
         if (!$chunks || $chunk == $chunks - 1) {
-            rename("{$filePath}.part", $filePath);
-            $array = ['file' => $filePath . $fileName];
+            rename($tempFilePath, $finalFilePath);
+            $array = ['file' => 'upload/video/' . $fileName];
             SuccessStory::create($array);
         }
 
         $info = 'Upload OK';
         $ok = 1;
 
-        return response()->json(['ok' => $ok, 'info' => $info],200);
+        return response()->json(['ok' => $ok, 'info' => $info], 200);
     }
+
 
     /**
      * Display the specified resource.

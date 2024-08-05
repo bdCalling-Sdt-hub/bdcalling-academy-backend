@@ -1,6 +1,7 @@
 <?php
 namespace App\Services;
 
+use App\Http\Requests\TeacherRequest;
 use App\Models\LeaveApplication;
 use App\Models\User;
 use App\Models\Teacher;
@@ -35,6 +36,9 @@ class TeacherService
             $teacher->expert = $request->expert;
             $teacher->created_by = $request->created_by ?? null;
             $teacher->status = 'active';
+            $teacher->payment_type = $request->payment_type;
+            $teacher->payment_method = $request->payment_method;
+            $teacher->payment = $request->payment;
 
             if ($request->file('image')) {
                 if (!empty($teacher->image)) {
@@ -78,6 +82,9 @@ class TeacherService
             $teacher->expert = $request->expert ?? $teacher->expert;
             $teacher->created_by = $request->created_by ?? $teacher->created_by;
             $teacher->status = $request->status ?? $teacher->status;
+            $teacher->payment_type = $request->payment_type ?? $teacher->payment_type;
+            $teacher->payment_method = $request->payment_method ?? $teacher->payment_method;
+            $teacher->payment = $request->payment ?? $teacher->payment;
 
             if ($request->file('image')) {
                 if (!empty($teacher->image)) {
@@ -118,6 +125,10 @@ class TeacherService
             $query->whereHas('user.teacher', function($q) use ($request) {
                 $q->where('designation', 'like', '%' . $request->input('designation') . '%');
             });
+        }
+
+        if ($request->filled('date')) {
+            $query->whereDate('created_at', 'like', '%' . $request->input('date') . '%');
         }
 
         if ($request->filled('leave_status')) {

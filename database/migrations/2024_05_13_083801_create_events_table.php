@@ -16,6 +16,7 @@ return new class extends Migration {
             $table->date('date');
             $table->time('time');
             $table->time('end_time');
+            $table->string('image');
             $table->string('locations');
             $table->text('descriptions');
             $table->string('status')->default(0);

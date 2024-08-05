@@ -13,14 +13,10 @@ return new class extends Migration
     {
         Schema::create('quizes', function (Blueprint $table) {
             $table->id();
-            $table->integer('course_module_id');            
-            $table->string('questions');            
-            $table->string('currect_ans');
-            $table->string('opt_1');
-            $table->string('opt_2');
-            $table->string('opt_3');
-            $table->string('opt_4');
-            $table->integer('mark'); 
+            $table->foreignId('course_module_id')->constrained('course_modules')->onDelete('cascade');
+            $table->json('questions');
+            $table->integer('mark')->nullable();
+            $table->string('exam_name')->nullable();
             $table->timestamps();
         });
     }

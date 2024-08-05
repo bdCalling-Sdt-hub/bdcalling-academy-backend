@@ -18,13 +18,13 @@ return new class extends Migration
             $table->text('image')->nullable();
             $table->string('created_by')->nullable();
             $table->string('status')->nullable();
+            $table->string('payment_type');
+            $table->string('payment_method');
+            $table->string('payment');
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('teachers');

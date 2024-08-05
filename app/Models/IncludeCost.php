@@ -8,9 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 class IncludeCost extends Model
 {
     use HasFactory;
+
     protected $fillable = [
-        'reason',
-        'cost',
+        'costing',
     ];
+
+    public function getCostingAttribute($value)
+    {
+        return json_decode($value);
+    }
 }
 

@@ -22,6 +22,8 @@ return new class extends Migration
             $table->text('address')->nullable();
             $table->string('add_by')->nullable();
             $table->string('student_type')->default('auth');
+            $table->json('messages')->nullable();
+            $table->string('event_name')->nullable();
             $table->string('image')->nullable();
             $table->timestamps();
         });

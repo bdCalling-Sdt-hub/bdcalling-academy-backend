@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Teacher;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\TeacherRequest;
+use App\Http\Requests\UpdateTeacherRequest;
+use App\Models\Batch;
+use App\Models\BatchTeacher;
 use App\Models\Teacher;
 use App\Services\TeacherService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -15,7 +18,7 @@ class RTeacherController extends Controller
 
     public function index()
     {
-        $teachers = Teacher::with('user')->paginate(6);
+        $teachers = Teacher::with('user','category')->paginate(8);
         return response()->json(['message' => 'Teacher List', 'teacher' => $teachers],200);
     }
 
@@ -53,7 +56,7 @@ class RTeacherController extends Controller
 
     }
 
-    public function update(Request $request, string $id)
+    public function update(UpdateTeacherRequest $request, string $id)
     {
 
         try {
@@ -105,5 +108,11 @@ class RTeacherController extends Controller
     public function rejectLeaveRequest(Request $request)
     {
        return $this->teacherService->rejectLeave($request);
+    }
+
+    public function showAssignModule(Request $request)
+    {
+        $batch_id = $request->batch_id;
+        return $teacher = Batch::with('course.course_module','teachers')->where('id',$batch_id)->first();
     }
 }

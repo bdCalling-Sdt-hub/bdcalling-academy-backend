@@ -96,9 +96,13 @@ class TeacherPaymentController extends Controller
             $query->where('payment_date', $request->payment_date);
         }
 
+        if ($request->filled('teacher_id')) {
+            $query->where('teacher_id', $request->teacher_id);
+        }
+
         // Filter by teacher's phone number
         if ($request->filled('phone_number')) {
-            $query->whereHas('teacher', function($q) use ($request) {
+            $query->whereHas('teacher.user', function($q) use ($request) {
                 $q->where('phone_number', $request->phone_number);
             });
         }

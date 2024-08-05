@@ -42,8 +42,15 @@ class AssessionController extends Controller
         $assession = new Assession();
         $assession->title = $request->title;
         // Save the image file and store its path
-        $imagePath = $request->file('image')->store('images');  // Assuming you have a "images" directory configured in your filesystem
-        $assession->image = $imagePath;
+//        $imagePath = $request->file('image')->store('images');
+//        $assession->image = $imagePath;
+
+        if ($request->file('image')) {
+            if (!empty($assession->image)) {
+                removeImage($assession->image);
+            }
+            $assession->image = saveImage($request, 'image');
+        }
         $assession->save();
 
         // Return a response indicating success
@@ -85,32 +92,11 @@ class AssessionController extends Controller
             ], 404);
         }
 
-        $prevImagePath = $assession_image->image;
-
-        if ($request->hasFile('image')) {
-            // If a new image is uploaded, unlink the previous image if it exists
-            if ($prevImagePath) {
-                // Unlink the previous image
-                if (file_exists(public_path($prevImagePath))) {
-                    unlink(public_path($prevImagePath));
-                }
+        if ($request->file('image')) {
+            if (!empty($teacher->image)) {
+                removeImage($teacher->image);
             }
-
-            $file = $request->file('image');
-            $extension = $file->getClientOriginalExtension();
-            $filename = time() . '.' . $extension;
-            $file->move('images/', $filename);
-            $assession_image->image = 'images/' . $filename;
-        } else {
-            // If no new image is uploaded, update the previous image data
-            if (!$prevImagePath) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'No new image uploaded and no previous image found',
-                ], 400);
-            }
-            // Update the image data with the previous image path
-            $assession_image->image = $prevImagePath;
+            $teacher->image = saveImage($request, 'image');
         }
 
         $assession_image->save();

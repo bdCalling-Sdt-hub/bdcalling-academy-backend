@@ -23,7 +23,10 @@ class TeacherRequest extends FormRequest
             'phone_number' => 'required|string',
             'designation' => 'required|string',
             'expert' => 'required|string',
-            'role' => 'UPPERCASE|string'
+            'role' => 'UPPERCASE|string',
+            'payment' => 'string',
+            'payment_method' => 'string',
+            'payment_type' => 'string',
         ];
 
     }

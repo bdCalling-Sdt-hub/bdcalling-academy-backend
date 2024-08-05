@@ -20,4 +20,9 @@ class CourseCategory extends Model
     {
         return $this->hasOne(Student::class);
     }
+
+    public function teacher():HasOne
+    {
+        return $this->hasOne(Teacher::class,'id');
+    }
 }

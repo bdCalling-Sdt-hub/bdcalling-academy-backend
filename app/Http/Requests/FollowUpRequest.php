@@ -15,7 +15,7 @@ class FollowUpRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'message' => 'required|string',
+            'messages' => 'required|string',
             'ids.*' => 'exists:students,id',
         ];
     }

@@ -18,7 +18,7 @@ class AddEmployeeController extends Controller
         if ($request->filled('name')){
             $query->where('name'. 'like' , '%' . $request->input('name') . '%');
         }
-        $admin = $query->paginate(9);
+        $admin = $query->paginate(8);
         return response()->json(['message' => 'Admin', 'data' => $admin]);
     }
 
@@ -29,7 +29,7 @@ class AddEmployeeController extends Controller
         if ($request->filled('name')){
             $query->where('name' , 'like' , '%' . $request->input('name') . '%');
         }
-        $super_admin = $query->paginate(9);
+        $super_admin = $query->paginate(8);
         return response()->json(['message' => 'Super Admin', 'data' => $super_admin]);
     }
 
@@ -39,6 +39,7 @@ class AddEmployeeController extends Controller
         $user = new User();
         $user->name = $request->name;
         $user->email = $request->email;
+        $user->phone_number = $request->phone_number;
 
         if ($request->file('image')) {
             $user->image = saveImage($request,'image');
@@ -46,6 +47,8 @@ class AddEmployeeController extends Controller
 
         $user->role = $request->role;
         $user->otp = 0;
+        $user->designation = $request->designation ?? null;
+        $user->expertise = $request->expertise ?? null;
         $user->email_verified_at = new Carbon();
         $user->password = Hash::make($request->password);
         $user->save();
@@ -58,7 +61,7 @@ class AddEmployeeController extends Controller
 
     public function show(string $id)
     {
-        $admin_user = User::where('role', 'ADMIN')->where('id',$id)->first();
+        $admin_user = User::where('role', 'ADMIN')->where('id',$id)->paginate(8);
         if ($admin_user) {
             return response()->json([
                 'message' => 'Admin',
@@ -86,6 +89,9 @@ class AddEmployeeController extends Controller
         }
         $admin_user->name = $request->name ?? $admin_user->name;
         $admin_user->email = $request->email ?? $admin_user->email;
+        $admin_user->phone_number = $request->phone_number ?? $admin_user->phone_number;
+        $admin_user->designation = $request->designation ?? $admin_user->designation;
+        $admin_user->expertise = $request->expertise ?? $admin_user->expertise;
         $admin_user->password = $request->password ?? $admin_user->password;
         $admin_user->update();
         return response()->json(['message' => 'Admin/Super Admin Updated Successfully']);
@@ -94,12 +100,14 @@ class AddEmployeeController extends Controller
     public function destroy(string $id)
     {
         //
-        $admin_user = User::where('role', 'ADMIN')->where('id', $id)->first();
+        $admin_user = User::where('id', $id)->first();
         if ($admin_user) {
             $admin_user->forcedelete();
             return response()->json([
                 'message' => 'Admin or Super Admin deleted successfully'
             ]);
+        }else{
+            return response()->json(['message' => 'Admin/Super Admin Does Not Exist'],404);
         }
     }
 

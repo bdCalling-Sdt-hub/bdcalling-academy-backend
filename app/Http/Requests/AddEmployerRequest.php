@@ -19,7 +19,7 @@ class AddEmployerRequest extends FormRequest
             'name' => 'required|string|min:2',
             'email' => 'required|email|max:100|unique:users,email',
             'image' => 'nullable',
-            'password' => 'required|string|min:6',
+            'password' => 'required|string|min:6|confirmed',
             'role' => ['required', 'string', Rule::in(['ADMIN', 'SUPER ADMIN'])],
         ];
     }

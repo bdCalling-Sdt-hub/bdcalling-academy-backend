@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\NewStudentAdmitRequest;
 use App\Http\Requests\UpdateStudentRequest;
+use App\Models\Batch;
 use App\Models\BatchStudent;
 use App\Models\Student;
 use App\Models\User;
@@ -137,6 +138,43 @@ class PhoenixStudentController extends Controller
     public function applicationForPhoenixBatch(Request $request)
     {
         return $request;
+    }
+
+    public function showPhoenixStudent(Request $request)
+    {
+        $query = Batch::with(['students.user', 'course.course_category'])
+            ->has('students')->where('batch_id','like','%'. 'Phoenix'. '%');
+
+        if ($request->filled('name')) {
+            $query->whereHas('students.user', function($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->input('name') . '%');
+            });
+        }
+
+        if ($request->filled('phone_number')) {
+            $query->whereHas('students', function($q) use ($request) {
+                $q->where('phone_number',$request->input('phone_number'));
+            });
+        }
+
+        if ($request->filled('registration_date')) {
+            $query->whereHas('students', function($q) use ($request) {
+                $q->where('registration_date', $request->input('registration_date'));
+            });
+        }
+
+        if ($request->filled('category_name')) {
+            $query->whereHas('course.category', function($q) use ($request) {
+                $q->where('category_name', $request->input('category_name'));
+            });
+        }
+
+        if ($request->filled('batch_id')) {
+
+            $query->where('batch_id', $request->input('batch_id'));
+        }
+
+        return $query->paginate(12);
     }
 
 

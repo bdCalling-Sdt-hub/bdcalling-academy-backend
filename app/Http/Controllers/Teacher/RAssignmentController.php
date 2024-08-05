@@ -23,7 +23,7 @@ class RAssignmentController extends Controller
             $query->where('date',$request->date);
         }
 
-        if ($request->filled('assignment_name')){
+        if ($request->filled(' ')){
             $query->where('assignment_name', $request->assignment_name);
         }
         $assignment = $query->paginate(12);

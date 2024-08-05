@@ -5,20 +5,22 @@ use App\Http\Requests\AboutRequest;
 use App\Http\Requests\PrivactytRequest;
 use App\Http\Requests\TermstRequest;
 use App\Http\Controllers\Controller;
+use App\Models\About;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class AboutController extends Controller
 {
     public function show_privacy()
     {
-        $privacy = DB::table('abouts')->select('privacy')->first();
+        $privacy = DB::table('abouts')->select('privacy')->where('id', 2)->first();
         if ($privacy) {
-            return resaposne()->json([
+            return response()->json([
                 'status' => 'success',
                 'data' => $privacy
             ], 200);
         } else {
-            return resaposne()->json([
+            return response()->json([
                 'status' => 'data not found',
                 'data' => $privacy
             ], 500);
@@ -27,6 +29,7 @@ class AboutController extends Controller
 
     public function privacyPolicy(PrivactytRequest $request)
     {
+
         $update_privacy = About::find($request->id);
         $update_privacy->privacy = $request->privacy;
         $update_privacy->save();
@@ -74,7 +77,7 @@ class AboutController extends Controller
         } else {
             return response()->json([
                 'status' => 'internal server error',
-                'data' => 'About update successfully'
+                'data' => 'About does not exist',
             ], 500);
         }
     }
@@ -83,7 +86,7 @@ class AboutController extends Controller
 
     public function show_terms()
     {
-        $terms = DB::table('abouts')->select('terms_condition')->first();
+        $terms = DB::table('abouts')->select('terms_condition')->where('id',3)->first();
         if ($terms) {
             return response()->json([
                 'status' => 'success',

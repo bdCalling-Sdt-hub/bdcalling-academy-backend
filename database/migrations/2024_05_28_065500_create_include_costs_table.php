@@ -13,8 +13,7 @@ return new class extends Migration
     {
         Schema::create('include_costs', function (Blueprint $table) {
             $table->id();
-            $table->string('reason');
-            $table->string('cost');
+            $table->json('costing');
             $table->timestamps();
         });
     }

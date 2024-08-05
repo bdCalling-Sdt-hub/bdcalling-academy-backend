@@ -8,15 +8,16 @@ use Illuminate\Http\Request;
 
 class RCourseController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         //
-        $courses = Course::all();
-        if (empty($courses)) {
-            return notExistResponse(404, 'Data does not exist');
-        } else {
-            return dataResponse(200, 'Courses List', $courses);
+        $query = Course::query();
+
+        if ($request->filled('course_type')) {
+                $query->where('course_type', $request->input('course_type'));
         }
+        $courses = $query->paginate(8);
+        return response($courses, 200);
     }
 
     public function create()
@@ -127,13 +128,11 @@ class RCourseController extends Controller
         // Find the product by id
         $course = Course::where('id', $id)->first();
 
-        // Check if the product exists
         if (!$course) {
-            return notExistResponse(404,'Course does not exist');
+            return response()->json(['message' => 'Course does not exist'],404);
         }
-        // Delete associated images from the public folder
         $course->delete();
-        return response()->josn([
+        return response()->json([
             'status' => 200,
             'message' => 'Course Delete Successfully'
         ]);

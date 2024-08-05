@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Teacher extends Model
 {
@@ -33,5 +34,20 @@ class Teacher extends Model
     public function batches():BelongsToMany
     {
         return $this->belongsToMany(Batch::class, 'batch_teachers', 'teacher_id', 'batch_id');
+    }
+
+    public function category():BelongsTo
+    {
+        return $this->belongsTo(CourseCategory::class, 'course_category_id');
+    }
+
+    public function batchTeachers():BelongsTo
+    {
+        return $this->belongsTo(BatchTeacher::class, 'teacher_id');
+    }
+
+    public function payments():HasMany
+    {
+        return $this->hasMany(Payment::class);
     }
 }
