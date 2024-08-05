@@ -33,14 +33,24 @@ class Student extends Model
         return $this->belongsToMany(Batch::class,'batch_students','student_id','batch_id');
     }
 
-    public function order():HasOne
+    public function order():HasMany
     {
-        return $this->hasOne(Order::class);
+        return $this->HasMany(Order::class);
     }
 
     public function mark():HasOne
     {
         return $this->hasOne(Mark::class);
+    }
+
+    public function getMessagesAttribute($value)
+    {
+        return json_decode($value);
+    }
+
+    public function attendance():HasOne
+    {
+        return $this->hasOne(Attendance::class,'student_id','id');
     }
 
 

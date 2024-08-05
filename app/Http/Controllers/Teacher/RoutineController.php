@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Teacher;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\RoutineRequest;
+use App\Models\BatchTeacher;
 use App\Models\Routine;
 use Illuminate\Http\Request;
 
@@ -30,6 +31,15 @@ class RoutineController extends Controller
         }
         if ($date) {
             $query->whereDate('date', $date);
+        }
+
+        if ($request->filled('teacher_id')) {
+            $teacher_id = $request->teacher_id;
+            $batch_teacher = BatchTeacher::where('teacher_id', $teacher_id)->get();
+            $course_ids = $batch_teacher->map(function ($item) {
+                return $item->batch->course_id;
+            });
+            $query->whereIn('course_id', $course_ids);
         }
 
         // Paginate the results

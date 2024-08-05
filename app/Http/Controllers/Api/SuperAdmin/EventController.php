@@ -9,12 +9,9 @@ use Illuminate\Http\Request;
 
 class EventController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        $event = Event::get();
+        $event = Event::paginate(9);
         if ($event) {
             return response()->json([
                 'status' => 'success',
@@ -28,36 +25,25 @@ class EventController extends Controller
         }
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create() {}
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(EventRequest $request)
     {
-        // Create the event
-        $event = Event::create($request->validated());
-        if ($event) {
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Event created successfully',
-                'data' => $event,
-            ], 201);
-        } else {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'internal serve errror',
-                'data' => $event,
-            ], 500);
+        $event = new Event();
+        $event->course_name = $request->course_name ;
+        $event->date = $request->date;
+        $event->time = $request->time;
+        $event->end_time = $request->end_time;
+        $event->locations = $request->locations;
+        $event->descriptions = $request->descriptions;
+        if ($request->file('image')) {
+            if (!empty($event->image)) {
+                removeImage($event->image);
+            }
+            $event->image = saveImage($request, 'image');
         }
-    }
+        $event->save();
+        return response()->json(['message' => 'Event created!'], 200);
 
-    /**
-     * Display the specified resource.
-     */
+    }
     public function show(string $id)
     {
         $event = Event::findOrFail($id);
@@ -70,39 +56,15 @@ class EventController extends Controller
             return response()->json([
                 'status' => 'error',
                 'data' => 'Record can not be found',
-            ]);
+            ],404);
         }
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(string $id)
     {
         //
     }
 
-    /** Update the specified resource in storage. */
-    // public function update(Request $request, string $id)
-    // {
-    //     $event = Event::findOrFail($id);
-    //     if ($event) {
-    //         $event->update($request->validated());
-
-    //         return response()->json([
-    //             'status' => 'success',
-    //             'message' => 'Event updated successfully',
-    //             'data' => $event,
-    //         ]);
-    //     } else {
-    //         return response()->json([
-    //             'status' => 'errro',
-    //             'message' => 'Record cand not be found',
-    //             'data' => $event,
-    //         ]);
-    //     }
-    // }
-    
     public function update(Request $request, string $id)
     {
         $event = Event::findOrFail($id);
@@ -112,6 +74,12 @@ class EventController extends Controller
         $event->end_time = $request->end_time ?? $event->end_time;
         $event->locations = $request->locations ?? $event->locations;
         $event->descriptions = $request->descriptions ?? $event->descriptions;
+        if ($request->file('image')) {
+            if (!empty($event->image)) {
+                removeImage($event->image);
+            }
+            $event->image = saveImage($request, 'image');
+        }
         $event->save();
         if ($event) {
             return response()->json([
@@ -127,15 +95,14 @@ class EventController extends Controller
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
         $event = Event::findOrFail($id);
         if ($event) {
             $event->delete();
-
+            if (!empty($event->image)) {
+                removeImage($event->image);
+            }
             return response()->json([
                 'status' => 'success',
                 'message' => 'Event deleted successfully',

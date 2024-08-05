@@ -15,8 +15,8 @@ return new class extends Migration
             $table->string('batch_name')->nullable();
             $table->date('start_date');
             $table->date('end_date');
-            $table->integer('seat_limit');
-            $table->integer('seat_left');
+            $table->integer('seat_limit')->nullable();
+            $table->integer('seat_left')->nullable();
             $table->string('image');
             $table->double('discount_price')->nullable();
             $table->timestamps();

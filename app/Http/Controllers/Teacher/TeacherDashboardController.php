@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Teacher;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LeaveRequest;
+use App\Models\BatchTeacher;
 use App\Services\LeaveService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class TeacherDashboardController extends Controller
 {
@@ -34,5 +36,11 @@ class TeacherDashboardController extends Controller
         }catch (\Exception $e){
             return response()->json(['message' => 'You did dont apply for leave', 'error' => $e->getMessage()],500);
         }
+    }
+
+    public function teacherBaseStudent(Request $request)
+    {
+        $teacher_id = auth()->user()->teacher->id;
+        return BatchTeacher::where('teacher_id',$teacher_id)->paginate(9);
     }
 }

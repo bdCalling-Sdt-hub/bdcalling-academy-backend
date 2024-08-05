@@ -15,11 +15,11 @@ class StudentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'phone_number',
-            'gender',
-            'religion',
-            'registration_date',
-            'dob',
+            'email' => 'required|email|unique:users,email',
+            'phone_number' => 'unique:students,phone_number',
+            'gender' =>  'in:male,female',
+            'religion' =>'string',
+            'dob' => 'nullable',
             'blood_group',
             'address',
             'add_by',

@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Api\SuperAdmin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Student;
+use App\Models\Teacher;
 use Illuminate\Http\Request;
 use App\Models\Order;
 use Carbon\Carbon;
-use App\Models\AddStudent;
-use App\Models\Trainer;
 use DB;
 class DashboardController extends Controller
 {
@@ -33,11 +33,11 @@ class DashboardController extends Controller
         $monthly_income = Order::whereBetween('created_at', [$startOfMonth, $endOfMonth])
                                ->sum('amount');
 
-        //  Total student 
-        $total_student = AddStudent::count();
-        $running_student = AddStudent::where('status','enrolled')->count();
-        $course_complet = AddStudent::where('status','complet')->count(); 
-        $total_trainer =  Trainer::count();                                  
+        //  Total student
+        $total_student = Student::count();
+        $running_student = Student::where('status','enrolled')->count();
+        $course_complet = Student::where('status','complet')->count();
+        $total_trainer =  Teacher::count();
 
         // Return the response as JSON
         return response()->json([
@@ -57,32 +57,6 @@ class DashboardController extends Controller
 
     public function averageMonthlyAdmissions(Request $request)
     {
-        // Fetch and group data by month
-        // $admissions = AddStudent::select(
-        //     DB::raw('YEAR(created_at) as year'),
-        //     DB::raw('MONTH(created_at "%M") as month'),
-        //     DB::raw('COUNT(*) as count')
-        // )
-        // ->groupBy('year', 'month')
-        // ->get();
-
-        // // Calculate the average
-        // $totalAdmissions = $admissions->sum('count');
-        // $numberOfMonths = $admissions->count();
-        // $averageAdmissions = $numberOfMonths ? $totalAdmissions / $numberOfMonths : 0;
-
-        // return response()->json([
-        //     'average_admissions' => $averageAdmissions,
-        //     'total_admissions' => $totalAdmissions,
-        //     'number_of_months' => $numberOfMonths,
-        //     'monthly_data' => $admissions
-        // ]);
-
- // Validate the input year
-        // $request->validate([
-        //     'year' => 'required|integer|min:1900|max:' . date('Y')
-        // ]);
-
          // Get the input year or default to the current year
          $year = $request->input('year', date('Y'));
 
@@ -93,13 +67,13 @@ class DashboardController extends Controller
                  'max_range' => date('Y')
              ]
          ]);
- 
+
          if ($validatedYear === false) {
              return response()->json(['error' => 'Invalid year provided.'], 400);
          }
- 
+
          // Fetch and group data by month with month name for the specified or current year
-         $admissions = AddStudent::select(
+         $admissions = Student::select(
                  DB::raw('DATE_FORMAT(created_at, "%M") as month_name'),
                  DB::raw('COUNT(*) as count')
              )
@@ -107,12 +81,12 @@ class DashboardController extends Controller
              ->groupBy('month_name')
              ->orderBy(DB::raw('MONTH(created_at)'))
              ->get();
- 
+
          // Calculate the average
          $totalAdmissions = $admissions->sum('count');
          $numberOfMonths = $admissions->count();
          $averageAdmissions = $numberOfMonths ? $totalAdmissions / $numberOfMonths : 0;
- 
+
          return response()->json([
              'average_admissions' => $averageAdmissions,
              'total_admissions' => $totalAdmissions,
@@ -120,7 +94,7 @@ class DashboardController extends Controller
              'monthly_data' => $admissions,
              'year' => $validatedYear
          ]);
-    
+
     }
 
 
@@ -148,11 +122,11 @@ class DashboardController extends Controller
         $monthly_income = Order::whereBetween('created_at', [$startOfMonth, $endOfMonth])
                                ->sum('amount');
 
-        //  Total student 
+        //  Total student
         $total_student = AddStudent::count();
         $running_student = AddStudent::where('status','enrolled')->count();
-        $course_complet = AddStudent::where('status','complet')->count(); 
-        $total_trainer =  Trainer::count();                                  
+        $course_complet = AddStudent::where('status','complet')->count();
+        $total_trainer =  Trainer::count();
 
         // Return the response as JSON
         return response()->json([
@@ -169,6 +143,6 @@ class DashboardController extends Controller
             ]
         ]);
     }
-          
-    
+
+
 }

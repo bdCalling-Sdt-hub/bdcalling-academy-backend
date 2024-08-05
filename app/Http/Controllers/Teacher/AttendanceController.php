@@ -5,24 +5,46 @@ namespace App\Http\Controllers\Teacher;
 use App\Http\Controllers\Controller;
 use App\Models\Attendance;
 use App\Models\Batch;
+use App\Models\BatchTeacher;
 use Illuminate\Http\Request;
 
 class AttendanceController extends Controller
 {
 
-    public function index()
+    public function index(Request $request)
     {
-        $attendance = Attendance::paginate(9);
-        return dataResponse(200,'Routine',$attendance);
+        $query = Attendance::with('student.user','batch');
+
+        if ($request->filled('phone_number')) {
+            $query->whereHas('student', function($q) use ($request) {
+                $q->where('phone_number',$request->input('phone_number'));
+            });
+        }
+        if ($request->filled('date')) {
+            $query->where('date',$request->input('date'));
+        }
+        if ($request->filled('batch_id')) {
+            $query->whereHas('batch', function($q) use ($request) {
+                $q->where('batch_id',$request->input('batch_id'));
+            });
+        }
+        $teacher_id = auth()->user()->teacher->id;
+        if ($request->filled('auth_user')) {
+            $query->whereHas('batch.teachers', function ($q) use ($teacher_id) {
+                $q->where('teacher_id', $teacher_id);
+            });
+        }
+        $attendance = $query->paginate(10);
+        return response()->json($attendance);
     }
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'batch_id' => 'required|integer',
+            'batch_id' => 'required|integer|exists:batches,id',
             'date' => 'required|date',
-            'attendance_by' => 'required|integer', // Assuming this is the teacher's ID
+            'attendance_by' => 'required|integer',
             'attendances' => 'required|array',
-            'attendances.*.student_id' => 'required|integer',
+            'attendances.*.student_id' => 'required|integer|exists:batch_students,id',
             'attendances.*.is_present' => 'required|boolean',
         ]);
 

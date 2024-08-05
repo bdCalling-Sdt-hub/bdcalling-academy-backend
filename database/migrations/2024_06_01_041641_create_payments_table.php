@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
             $table->foreignId('teacher_id');
-            $table->foreignId('course_module_id');
+            $table->foreignId('course_module_id')->nullable();
             $table->string('payment_type');
             $table->double('amount');
             $table->date('payment_date');

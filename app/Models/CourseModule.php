@@ -34,4 +34,9 @@ class CourseModule extends Model
     {
         return $this->hasOne(Routine::class);
     }
+
+    public function quiz():HasOne
+    {
+        return $this->hasOne(Quize::class);
+    }
 }

@@ -29,9 +29,16 @@ class StudentController extends Controller
         }
         if ($request->filled('phone_number')) {
             $phone = $request->input('phone_number');
-            $query->whereHas('user',function ($q) use ($phone){
-                $q->where('phone_number', 'like', '%' . $phone . '%');
-            });
+                $query->where('phone_number', 'like', '%' . $phone . '%');
+            }
+        if ($request->filled('student_type')) {
+            $student_type = $request->input('student_type');
+            $query->where('student_type',$student_type);
+        }
+
+        if ($request->filled('event_name')) {
+            $event_name = $request->input('event_name');
+            $query->where('event_name', 'like', '%' . $event_name . '%');
         }
 
         if ($request->filled('category_name')) {
@@ -39,6 +46,21 @@ class StudentController extends Controller
             $query->whereHas('category',function ($q) use ($category){
                 $q->where('category_name', 'like', '%' . $category . '%');
             });
+        }
+
+        if ($request->filled('category_id')) {
+            $category = $request->input('category_id');
+                $query->where('category_id',$category);
+        }
+
+        if ($request->filled('add_by')) {
+            $add_by = $request->input('add_by');
+            $query->where('add_by', $add_by);
+        }
+
+        if ($request->filled('date')) {
+            $date = $request->input('date');
+            $query->where('registration_date', $date);
         }
 
         $students = $query->paginate(10);
@@ -68,11 +90,12 @@ class StudentController extends Controller
             $student->gender = $request->gender;
             $student->religion = $request->religion;
             $student->registration_date = $request->registration_date;
-            $student->dob = $request->dob;
+            $student->dob = $request->dob ?? null;
             $student->blood_group = $request->blood_group;
             $student->address = $request->address;
-            $student->add_by = $request->add_by;
+            $student->add_by = auth()->user()->name;
             $student->student_type = $request->student_type;
+            $student->event_name = $request->event_name ?? null;
             if ($request->file('image')) {
                 if (!empty($student->image)) {
                     removeImage($student->image);
@@ -125,7 +148,6 @@ class StudentController extends Controller
                 }
                 $student->image = saveImage($request, 'image');
             }
-
             $student->save();
 
             DB::commit();

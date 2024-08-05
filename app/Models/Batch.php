@@ -67,4 +67,19 @@ class Batch extends Model
     {
         return $this->hasOne(Batch::class);
     }
+
+    public function attendance():HasOne
+    {
+        return $this->hasOne(Batch::class);
+    }
+
+    public function batch_student():hasMany
+    {
+        return $this->hasMany(BatchStudent::class);
+    }
+
+    public function batch_teacher():HasMany
+    {
+        return $this->hasMany(BatchTeacher::class);
+    }
 }

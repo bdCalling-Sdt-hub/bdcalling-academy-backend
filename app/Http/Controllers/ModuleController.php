@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ModuleRequest;
+use App\Models\BatchTeacher;
 use App\Models\Course;
 use App\Models\CourseModule;
+use App\Models\Quize;
 use App\Models\Video;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -58,6 +60,20 @@ class ModuleController extends Controller
                 $videoObj->video_url = $video['video'];
                 $videoObj->order = $index + 1;
                 $videoObj->save();
+            }
+
+            $quizes = json_decode($request->questions, true);
+
+            if ($request->questions) {
+                foreach ($quizes as $quiz) {
+                    $quiz = new Quize();
+                    $quiz->course_module_id = $module->id;
+                    $quiz->questions = $request->questions;
+                    $quiz->exam_name = $request->exam_name;
+                    $quiz->marks = $request->marks;
+//                    return $quiz;
+                    $quiz->save();
+                }
             }
 
             DB::commit();
@@ -127,11 +143,84 @@ class ModuleController extends Controller
         }
     }
 
-    public function showModule()
+    public function updateModuleVideo(Request $request, $moduleId)
     {
-        $course_list_with_module = Course::with('course_module.videos')->paginate(9);
-        return dataResponse(200, 'Course With Module List', $course_list_with_module);
+        DB::beginTransaction();
+        try {
+            // Find the module
+            $module = CourseModule::findOrFail($moduleId);
+
+            // Update module fields
+            $module->module_title = strtolower($request->module_title);
+            $module->module_no = $request->module_no ?? $module->module_no;
+            $module->created_by = $request->created_by ?? $module->created_by;
+            $module->save();
+
+            // Decode module_class JSON
+            $videos = json_decode($request->module_class, true);
+
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                throw new \Exception('Invalid JSON in module_class');
+            }
+
+            if (!is_array($videos)) {
+                throw new \Exception('module_class should be an array of videos');
+            }
+
+            // Delete existing videos for the module
+            Video::where('course_module_id', $moduleId)->delete();
+
+            // Add new videos
+            foreach ($videos as $index => $video) {
+                $videoObj = new Video;
+                $videoObj->course_module_id = $module->id;
+                $videoObj->name = $video['name'];
+                $videoObj->video_url = $video['video'];
+                $videoObj->order = $index + 1;
+                $videoObj->save();
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'status' => 200,
+                'message' => 'Module and videos updated successfully',
+                'data' => $module->load('videos'),
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error updating module: ' . $e->getMessage());
+
+            return response()->json([
+                'status' => 500,
+                'message' => 'An error occurred while updating the module',
+            ], 500);
+        }
     }
 
 
+    public function showModule(Request $request)
+    {
+        $course_id = $request->course_id;
+        $query = Course::with('course_module.videos', 'course_module.quiz');
+        if ($request->filled('course_id')) {
+            $query->where('id', $course_id);
+        }
+        if ($request->filled('teacher_id')) {
+            $teacher_id = $request->teacher_id;
+            $batch_teacher = BatchTeacher::where('teacher_id', $teacher_id)->get();
+            $course_ids = $batch_teacher->map(function ($item) {
+                return $item->batch->course_id;
+            });
+            $query->whereIn('id', $course_ids);
+        }
+        $course_list_with_module = $query->paginate(9);
+        return dataResponse(200, 'Course With Module List', $course_list_with_module);
+    }
+
+    public function getSingleModule(string $id)
+    {
+        $query = CourseModule::with('videos','quiz')->where('id',$id)->first();
+        return dataResponse(200, 'Module Details', $query);
+    }
 }
