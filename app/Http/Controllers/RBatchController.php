@@ -51,7 +51,6 @@ class RBatchController extends Controller
                 $teacher_batch = new BatchTeacher();
                 $teacher_batch->batch_id = $batch->id;
                 $teacher_batch->teacher_id = $teacher_id;
-                $teacher_batch->save();
             }
             DB::commit();
 
@@ -212,5 +211,6 @@ class RBatchController extends Controller
             return $item->batch;
         });
         return response()->json($filter_batch);
+
     }
 }

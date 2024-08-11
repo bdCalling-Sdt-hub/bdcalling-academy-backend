@@ -44,7 +44,7 @@ class FollowUpController extends Controller
         }
 
         foreach ($students as $student) {
-            $student->notify(new FollowUpMessage($student->phone_number, $message));
+          //  $student->notify(new FollowUpMessage($student->phone_number, $message));
 
             // Retrieve the existing messages
             $existingMessages = $student->messages ?: [];

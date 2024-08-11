@@ -8,11 +8,15 @@ use App\Http\Requests\UpdateTeacherRequest;
 use App\Models\Batch;
 use App\Models\BatchTeacher;
 use App\Models\Teacher;
+use App\Models\User;
 use App\Services\TeacherService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+
 class RTeacherController extends Controller
 {
 

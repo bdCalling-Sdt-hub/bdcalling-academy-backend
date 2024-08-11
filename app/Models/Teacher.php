@@ -50,4 +50,9 @@ class Teacher extends Model
     {
         return $this->hasMany(Payment::class);
     }
+
+    public function trainer_reviews():HasMany
+    {
+        return $this->hasMany(TrainerReview::class);
+    }
 }

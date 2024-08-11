@@ -11,5 +11,6 @@ class SuccessStory extends Model
 
     protected $fillable = [
         'file',
+        'type'
     ];
 }

@@ -10,12 +10,10 @@ use Intervention\Image\ImageManagerStatic as Image;
 
 class GallerytController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+
     public function index()
     {
-        $gellary_image = Galleryr::orderBy('id', 'desc')->get();
+        $gellary_image = Galleryr::orderBy('id', 'desc')->paginate(9);
         if ($gellary_image) {
             return response()->json([
                 'status' => 'success',
@@ -29,17 +27,11 @@ class GallerytController extends Controller
         }
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(GellaryRequest $request)
     {
         $gellary_image = new Galleryr();
@@ -68,9 +60,6 @@ class GallerytController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
         $gellary_image = Galleryr::where('id', $id)->first();
@@ -87,14 +76,8 @@ class GallerytController extends Controller
         }
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(string $id) {}
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
         $gellary_image = Galleryr::find($request->id);
@@ -142,9 +125,6 @@ class GallerytController extends Controller
         ]);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
         // Find the Galleryr model instance by its ID

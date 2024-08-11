@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\SuperAdmin;
 
 use App\Http\Controllers\Controller;
+use App\Models\BatchStudent;
 use App\Models\Student;
 use App\Models\Teacher;
 use Illuminate\Http\Request;
@@ -35,21 +36,21 @@ class DashboardController extends Controller
 
         //  Total student
         $total_student = Student::count();
-        $running_student = Student::where('status','enrolled')->count();
-        $course_complet = Student::where('status','complet')->count();
+        $running_student = BatchStudent::where('status','enrolled')->count();
+        $course_complet = BatchStudent::where('status','completed')->count();
         $total_trainer =  Teacher::count();
 
         // Return the response as JSON
         return response()->json([
             'status' => 'success',
             'data' => [
-                'total_incom'=> $total_income,
+                'total_income'=> $total_income,
                 'daily_income' => $daily_income,
                 'weekly_income' => $weekly_income,
                 'monthly_income' => $monthly_income,
                 'total_student' => $total_student,
                 'running_student'=>$running_student,
-                'complet_course' => $course_complet,
+                'complete_course' => $course_complet,
                 'total_trainer'=>$total_trainer,
             ]
         ]);

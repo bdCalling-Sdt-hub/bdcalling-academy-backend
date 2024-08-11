@@ -5,15 +5,20 @@ namespace App\Http\Controllers\Api\SuperAdmin;
 use App\Http\Controllers\Controller;
 use App\Models\Student;
 use App\Models\SuccessStory;
-use App\Models\AddStudent;
 use Illuminate\Http\Request;
 
 class SuccessStoryController extends Controller
 {
 
-    public function index()
+    public function index(Request $request)
     {
-         return response()->json(SuccessStory::paginate(8));
+        $query = SuccessStory::query();
+        if (filled($request->type)){
+            $query->where('type',$request->type);
+        }
+         $successStories = $query->paginate(8);
+
+         return response()->json($successStories);
     }
 
     public function create()
@@ -24,7 +29,7 @@ class SuccessStoryController extends Controller
     public function store(Request $request)
     {
         $input = $request->all();
-
+        $type = $request->type;
         // The upload destination - change this to your own
         $uploadDir = storage_path('app/public/upload/video');
 
@@ -64,7 +69,10 @@ class SuccessStoryController extends Controller
         // Check if the file has been completely uploaded
         if (!$chunks || $chunk == $chunks - 1) {
             rename($tempFilePath, $finalFilePath);
-            $array = ['file' => 'upload/video/' . $fileName];
+            $array = [
+                'file' => 'storage/upload/video/' . $fileName,
+                'type' => $type
+            ];
             SuccessStory::create($array);
         }
 

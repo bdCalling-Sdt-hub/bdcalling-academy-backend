@@ -14,7 +14,7 @@ class SStudentController extends Controller
     public function enrolledCourses(Request $request)
     {
         $student_id = auth()->user()->student->id;
-        $query = BatchStudent::with('batch.course.course_module.videos')->where('student_id',$student_id);
+        $query = BatchStudent::with('batch.course.course_module.videos','batch.teachers')->where('student_id',$student_id);
         if($request->filled('id')){
             $query->where('id',$request->id);
         }

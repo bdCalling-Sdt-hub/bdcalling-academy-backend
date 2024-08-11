@@ -140,7 +140,7 @@ class StudentController extends Controller
             $student->blood_group = $request->blood_group ?? $student->blood_group;
             $student->address = $request->address ?? $student->address;
             $student->add_by = $request->add_by ?? $student->add_by;
-            $student->student_type = $request->student_type ?? $student->add_by;
+            $student->student_type = $request->student_type ?? $student->student_type;
 
             if ($request->file('image')) {
                 if (!empty($student->image)) {

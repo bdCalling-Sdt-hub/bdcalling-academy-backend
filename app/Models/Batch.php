@@ -33,11 +33,6 @@ class Batch extends Model
         return $this->belongsTo(CourseCategory::class);
     }
 
-    public function addStudents()
-    {
-        return $this->hasMany(AddStudent::class);
-    }
-
     public function teachers():BelongsToMany
     {
         return $this->belongsToMany(Teacher::class, 'batch_teachers', 'batch_id', 'teacher_id');

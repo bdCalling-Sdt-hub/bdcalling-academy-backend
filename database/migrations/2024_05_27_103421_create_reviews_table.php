@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('reviews', function (Blueprint $table) {
             $table->id();
-            $table->integer('add_students_id');
-            $table->integer('course_id');
-            $table->integer('batch_id');
+            $table->foreignId('user_id')->constrained('users');
+            $table->foreignId('course_id')->constrained('courses');
+            $table->foreignId('batch_id')->constrained('batches');
             $table->string('rating_value');
             $table->string('message');
             $table->string('status')->default('pending');

@@ -73,4 +73,10 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasOne(StudentFeedback::class);
     }
 
+    public function trainer_review():HasOne
+    {
+        return $this->hasOne(TrainerReview::class);
+    }
+
+
 }

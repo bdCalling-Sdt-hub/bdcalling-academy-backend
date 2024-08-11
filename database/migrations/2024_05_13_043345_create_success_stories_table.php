@@ -13,6 +13,7 @@ return new class extends Migration {
         Schema::create('success_stories', function (Blueprint $table) {
             $table->id();
             $table->string('file');
+            $table->string('type')->nullable();
             $table->timestamps();
         });
     }

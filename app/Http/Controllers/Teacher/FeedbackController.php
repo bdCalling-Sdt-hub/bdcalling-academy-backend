@@ -12,7 +12,7 @@ class FeedbackController extends Controller
 
     public function index()
     {
-        return $student_feedback = StudentFeedback::with('user')->paginate(9);
+        return $student_feedback = StudentFeedback::with('user.student')->paginate(9);
     }
 
 
@@ -68,7 +68,7 @@ class FeedbackController extends Controller
     public function showFeedback()
     {
         $user_id = auth()->user()->id;
-        $student_feedback = StudentFeedback::with('user')->where('user_id',$user_id)->paginate(9);
+        $student_feedback = StudentFeedback::with('user.student')->where('user_id',$user_id)->paginate(9);
         if ($user_id){
             return response()->json(['message' => 'feedback', 'data' => $student_feedback ], 200);
         }else

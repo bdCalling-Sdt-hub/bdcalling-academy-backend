@@ -201,13 +201,14 @@ class ModuleController extends Controller
 
     public function showModule(Request $request)
     {
+
         $course_id = $request->course_id;
         $query = Course::with('course_module.videos', 'course_module.quiz');
         if ($request->filled('course_id')) {
             $query->where('id', $course_id);
         }
         if ($request->filled('teacher_id')) {
-            $teacher_id = $request->teacher_id;
+            $teacher_id = auth()->user()->teacher->id;
             $batch_teacher = BatchTeacher::where('teacher_id', $teacher_id)->get();
             $course_ids = $batch_teacher->map(function ($item) {
                 return $item->batch->course_id;

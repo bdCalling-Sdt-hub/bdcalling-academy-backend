@@ -70,7 +70,6 @@ class AuthController extends Controller
 
             $user = User::create($userData);
 
-            // Encrypt the phone number
             $encryptedPhoneNumber = Crypt::encryptString($request->phone_number);
 
             $verificationLink = route('verify.email', [
@@ -260,9 +259,31 @@ class AuthController extends Controller
         if ($this->guard()->user()) {
             $user = $this->guard()->user();
 
-            return response()->json([
-                'user' => $user
-            ]);
+            if($this->guard()->user()->role == 'STUDENT'){
+                $user = User::with('student')->where('id', $user->id)->first();
+                return response()->json([
+                    'user' => $user
+                ]);
+            }
+            elseif ($this->guard()->user()->role == 'MENTOR')
+            {
+                $user = User::with('teacher')->where('id', $user->id)->first();
+                return response()->json([
+                    'user' => $user
+                ]);
+            }
+            elseif ($this->guard()->user()->role == 'SUPER ADMIN')
+            {
+                return response()->json([
+                    'user' => $user
+                ]);
+            }
+            elseif ($this->guard()->user()->role == 'ADMIN')
+            {
+                return response()->json([
+                    'user' => $user
+                ]);
+            }
         } else {
             return response()->json(['message' => 'You are unauthorized'],401);
         }

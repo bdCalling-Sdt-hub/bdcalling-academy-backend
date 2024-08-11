@@ -47,6 +47,7 @@ use App\Http\Controllers\Api\SuperAdmin\DashboardController;
 use App\Http\Controllers\Api\Student\StudentDashbordController;
 
 use App\Http\Controllers\Api\WebApi\FreSemenarController;
+use App\Http\Controllers\TrainerReviewController;
 use App\Http\Controllers\WalletController;
 use App\Http\Controllers\WebsiteController;
 use Illuminate\Support\Facades\Route;
@@ -104,8 +105,6 @@ Route::post('/add/student', [AddStudentController::class, 'addStudent']);
 
 // ===================== Add Review ================= //
 
-Route::resource('reviews', ReviewController::class);
-
 // ===================== ADD INCLUDE COST ================= //
 Route::resource('/include/cost', IncludeCostController::class);
 
@@ -126,8 +125,8 @@ Route::post('/update/terms', [AboutController::class, 'terms_condition']);
 
 Route::resource('/assession', AssessionController::class);
 Route::resource('/success/story', successStoryController::class);
-Route::resource('/event', EventController::class);
-Route::resource('/gallery', GallerytController::class);
+
+
 
 // ==================== CONTACT US =====================//
 
@@ -156,7 +155,7 @@ Route::middleware(['super.admin','auth:api'])->group(function (){
     Route::get('/show-assign-module',[RTeacherController::class,'showAssignModule']);
 
     //====================== Super Admin Teacher ============================
-    Route::resource('teachers',RTeacherController::class)->except('create','edit');
+    Route::resource('teachers',RTeacherController::class)->except('create','edit','update');
 
     Route::get('admin-show-leave-application',[RTeacherController::class,'showLeaveApplication']);
     Route::post('approve-leave-application',[RTeacherController::class,'approveLeaveRequest']);
@@ -170,7 +169,7 @@ Route::middleware(['super.admin','auth:api'])->group(function (){
     Route::post('add-teacher-salary',[CostController::class,'addTeacherSalary']);
 
     //====================== batch ==================================
-    Route::resource('batches',RBatchController::class)->except('create','edit');
+    Route::resource('batches',RBatchController::class)->except('create','edit','show');
     Route::resource('phoenix-batches',PhoenixBatchController::class);
     Route::get('show-phoenix-students',[PhoenixStudentController::class,'showPhoenixStudent']);
 
@@ -195,6 +194,9 @@ Route::middleware(['mentor','auth:api'])->group(function (){
     //===================== Trainer Dashboard ================================
     Route::post('request-leave-application',[TeacherDashboardController::class,'requestLeaveApplication']);
     Route::get('show-leave-application',[TeacherDashboardController::class,'showLeaveRequest']);
+
+    Route::resource('/trainer-reviews', TrainerReviewController::class)->only('show');
+
 });
 
 Route::middleware(['student'])->group(function (){
@@ -210,6 +212,10 @@ Route::middleware(['student'])->group(function (){
 
     //enrolled courses
     Route::get('/enrolled-courses', [SStudentController::class, 'enrolledCourses']);
+
+    Route::resource('reviews', ReviewController::class)->only('index','store');
+
+    Route::resource('/trainer-reviews', TrainerReviewController::class)->only('store');
 
 
 });
@@ -236,9 +242,6 @@ Route::get('/show-dropout-student',[AdmitController::class,'showDropOutStudent']
 Route::post('/student-payment',[StudentPaymentController::class,'admittedPayment']);
 Route::get('/show-student-payment',[StudentPaymentController::class,'showSingleStudentPaymentHistory']);
 
-//============================Student Feedback=========================================
-Route::resource('/feedbacks',FeedbackController::class)->except('edit','create');
-
 
 ///====================== Website Api's =========================================
 
@@ -250,20 +253,12 @@ Route::post('/assign-mark',[MarkController::class,'studentMark']);
 Route::post('/assign-mark/{id}',[MarkController::class,'updateStudentMark']);
 Route::get('/show-assign-mark',[MarkController::class,'showStudentMark']);
 
-
 //-------------------------- Notificatins ------------------- //
 
 Route::get('/show-notification',[NotificationsController::class,'notifications']);
 Route::post('/mark-as-read/{id}',[NotificationsController::class,'markAsRead']);
 
 Route::get('/delete-notification/{id}',[NotificationsController::class,'destroy']);
-
-
-
-
-//================================ Follow Up Message ===================================
-Route::post('/follow-up-message',[FollowUpController::class,'followUpMessage']);
-
 
 //====================================Payment =========================================
 
@@ -275,19 +270,31 @@ Route::post('/fail', [PaymentSslcommerzeController::class, 'fail']);
 Route::post('/cancel', [PaymentSslcommerzeController::class, 'cancel']);
 Route::post('/ipn', [PaymentSslcommerzeController::class, 'ipn']);
 
-
-
 Route::middleware(['admin','auth:api'])->group(function (){
+    Route::get('all-reviews',[ReviewController::class,'allReviews']);
+    Route::resource('reviews', ReviewController::class)->only('destroy');
+    Route::resource('/gallery', GallerytController::class);
+    Route::resource('/event', EventController::class);
 
+    Route::get('/successful-student',[AdmitController::class,'showSuccessfulStudent']);
+    Route::post('/completed-student',[AdmitController::class,'completedStudent']);
+
+    Route::resource('/trainer-reviews', TrainerReviewController::class)->only('index');
+
+    Route::get('/publish-trainer-reviews/{id}', [TrainerReviewController::class, 'publishTrainerReview']);
 });
 
 Route::middleware(['student.admin','auth:api'])->group(function (){
     Route::get('/show-quize-student/{id}', [StudentDashbordController::class, 'show_quize']);
+
+    Route::resource('reviews', ReviewController::class)->only('update');
+
+    Route::resource('/trainer-reviews', TrainerReviewController::class)->only('update');
 });
 
 Route::middleware(['mentor.admin','auth:api'])->group(function (){
     //============================= Student =====================================
-    Route::resource('/students',StudentController::class)->except('create','edit');
+    Route::resource('/students',StudentController::class)->except('create','edit','update');
 
     Route::resource('routines',RoutineController::class)->except('create','edit');
 
@@ -310,11 +317,29 @@ Route::middleware(['mentor.admin','auth:api'])->group(function (){
     //Assignment
 
     Route::resource('/assignments', RAssignmentController::class)->except('create','edit');
+
+    Route::resource('batches',RBatchController::class)->only('show');
+
+    Route::resource('teachers',RTeacherController::class)->only('update');
+
+    //================================ Follow Up Message ===================================
+    Route::post('/follow-up-message',[FollowUpController::class,'followUpMessage']);
+
+    //============================Student Feedback=========================================
+    Route::resource('/feedbacks',FeedbackController::class)->except('edit','create');
 });
 
+
+Route::middleware(['student.mentor.admin','auth:api'])->group(function (){
+    Route::resource('/students',StudentController::class)->only('update');
+});
 
 //Phoenix Batch Student
 Route::post('/admit-phoenix-student',[PhoenixStudentController::class,'admitPhoenixStudent']);
 Route::post('/update-phoenix-student/{id}',[PhoenixStudentController::class,'updatePhoenixStudent']);
 Route::get('/destroy-phoenix-student/{id}',[PhoenixStudentController::class,'destroyPhoenixStudent']);
 Route::post('/application-phoenix',[PhoenixStudentController::class,'applicationForPhoenixBatch']);
+
+
+
+

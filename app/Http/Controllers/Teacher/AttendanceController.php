@@ -7,6 +7,7 @@ use App\Models\Attendance;
 use App\Models\Batch;
 use App\Models\BatchTeacher;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class AttendanceController extends Controller
 {
@@ -28,8 +29,9 @@ class AttendanceController extends Controller
                 $q->where('batch_id',$request->input('batch_id'));
             });
         }
-        $teacher_id = auth()->user()->teacher->id;
+
         if ($request->filled('auth_user')) {
+            $teacher_id = auth()->user()->teacher->id;
             $query->whereHas('batch.teachers', function ($q) use ($teacher_id) {
                 $q->where('teacher_id', $teacher_id);
             });
@@ -63,6 +65,7 @@ class AttendanceController extends Controller
                 ]
             );
         }
+        Log::info('This is some useful information.');
         return response()->json(['message' => 'Attendance recorded successfully']);
     }
 

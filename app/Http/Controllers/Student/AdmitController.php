@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Student;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AdmitRequest;
 use App\Http\Requests\DropoutRequest;
+use App\Http\Requests\SuccessfulStudentRequest;
 use App\Models\Batch;
 use App\Models\BatchStudent;
 use App\Models\Student;
@@ -82,7 +83,6 @@ class AdmitController extends Controller
         return response()->json(['message' => 'Assign Batch To Student Successfully', 'data' => $batch_student]);
     }
 
-
     public function showAdmitStudentV2(Request $request)
     {
         $registration_date = $request->filled('registration_date');
@@ -127,7 +127,125 @@ class AdmitController extends Controller
 
     public function showAdmitStudent(Request $request)
     {
-        $query = Batch::with(['students.user','students.order', 'course.course_category'])
+        // Get the list of dropout students
+        $dropout_student = BatchStudent::where('status', 'enrolled')->get();
+
+        // Extract the student IDs of the dropout students
+        $dropout_student_ids = $dropout_student->pluck('student_id')->toArray();
+
+        // Filter the student list to include only those who are in the dropout list
+        $query = Batch::with(['students.user', 'students.order', 'course.course_category'])
+            ->whereHas('students', function ($query) use ($dropout_student_ids) {
+                $query->whereIn('student_id', $dropout_student_ids);
+            })
+            ->has('students');
+
+        if ($request->filled('name')) {
+            $query->whereHas('students.user', function($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->input('name') . '%');
+            });
+        }
+
+        if ($request->filled('phone_number')) {
+            $query->whereHas('students', function($q) use ($request) {
+                $q->where('phone_number',$request->input('phone_number'));
+            });
+        }
+
+        if ($request->filled('registration_date')) {
+            $query->whereHas('students', function($q) use ($request) {
+                $q->where('registration_date', $request->input('registration_date'));
+            });
+        }
+
+        if ($request->filled('category_name')) {
+            $query->whereHas('course.category', function($q) use ($request) {
+                $q->where('category_name', $request->input('category_name'));
+            });
+        }
+
+        if ($request->filled('batch_id')) {
+
+            $query->where('batch_id', $request->input('batch_id'));
+        }
+
+        return $query->paginate(12);
+//        $query = Batch::with(['students.user','students.order', 'course.course_category'])
+//            ->has('students');
+//
+//        if ($request->filled('name')) {
+//            $query->whereHas('students.user', function($q) use ($request) {
+//                $q->where('name', 'like', '%' . $request->input('name') . '%');
+//            });
+//        }
+//
+//        if ($request->filled('phone_number')) {
+//            $query->whereHas('students', function($q) use ($request) {
+//                $q->where('phone_number',$request->input('phone_number'));
+//            });
+//        }
+//
+//        if ($request->filled('registration_date')) {
+//            $query->whereHas('students', function($q) use ($request) {
+//                $q->where('registration_date', $request->input('registration_date'));
+//            });
+//        }
+//
+//        if ($request->filled('category_name')) {
+//            $query->whereHas('course.category', function($q) use ($request) {
+//                $q->where('category_name', $request->input('category_name'));
+//            });
+//        }
+//
+//        if ($request->filled('batch_id')) {
+//
+//            $query->where('batch_id', $request->input('batch_id'));
+//        }
+//
+//        return $query->paginate(12);
+    }
+
+    public function dropOutStudent(DropoutRequest $request)
+    {
+        $student_id = $request->student_id;
+        $batch_id = $request->batch_id;
+        $student = BatchStudent::where('student_id',$student_id)->where('batch_id',$batch_id)->first();
+
+        if (empty($student))
+        {
+            return response()->json(['message' => 'Student Does Not Exist'],404);
+        }
+        $student->status = 'dropout';
+        $student->update();
+        return response()->json(['message' => 'Student is dropout successfully'],200);
+    }
+//        public function showDropOutStudent(Request $request)
+//        {
+//           $dropout_student = BatchStudent::where('status','dropout')->get();
+//
+//            $student_list = Batch::with(['students.user','students.order', 'course.course_category'])
+//                ->has('students')->get();
+//
+//            return response()->json([
+//                'student_list' => $student_list,
+//                'dropout_student' => $dropout_student,
+//            ]);
+//
+//
+//        }
+    public function showDropOutStudent(Request $request)
+    {
+        // Get the list of dropout students
+        $dropout_student = BatchStudent::where('status', 'dropout')->get();
+
+        // Extract the student IDs of the dropout students
+        $dropout_student_ids = $dropout_student->pluck('student_id')->toArray();
+
+        // Filter the student list to include only those who are in the dropout list
+        $query = Batch::with(['students.user', 'students.order', 'course.course_category'])
+            ->whereHas('students', function ($query) use ($dropout_student_ids) {
+                $query->whereIn('student_id', $dropout_student_ids);
+            })
             ->has('students');
 
         if ($request->filled('name')) {
@@ -162,61 +280,76 @@ class AdmitController extends Controller
         return $query->paginate(12);
     }
 
-    public function dropOutStudent(DropoutRequest $request)
+    public function completedStudent(SuccessfulStudentRequest $request)
     {
-        $student_id = $request->student_id;
+        $student_ids =json_decode( $request->student_ids);  // Expecting an array of student IDs
         $batch_id = $request->batch_id;
-        $student = BatchStudent::where('student_id',$student_id)->where('batch_id',$batch_id)->first();
 
-        if (empty($student))
-        {
-            return response()->json(['message' => 'Student Does Not Exist'],404);
+        // Check if the students exist in the batch
+        $students = BatchStudent::whereIn('student_id', $student_ids)
+            ->where('batch_id', $batch_id)
+            ->get();
+
+        if ($students->isEmpty()) {
+            return response()->json(['message' => 'Students Do Not Exist'], 404);
         }
-        $student->status = 'dropout';
-        $student->update();
-        return response()->json(['message' => 'Student is dropout successfully'],200);
+
+        // Update the status for each student
+        foreach ($students as $student) {
+            $student->status = 'completed';
+            $student->update();
+        }
+
+        return response()->json(['message' => 'Students have been marked as Completed successfully'], 200);
     }
 
-    public function showDropOutStudent(Request $request)
+
+    public function showSuccessfulStudent(Request $request)
     {
-        $registration_date = $request->filled('registration_date');
-        $name = $request->filled('name');
-        $phone_number = $request->filled('phone_number');
-        $category_name = $request->filled('category_name');
-        $batch_id = $request->filled('batch_id');
+        // Get the list of dropout students
+        $completed_student = BatchStudent::where('status', 'completed')->get();
 
-        $query = Batch::with(['students.user', 'course.course_category'])
-            ->has('students')->first();
+        // Extract the student IDs of the dropout students
+        $dropout_student_ids = $completed_student->pluck('student_id')->toArray();
 
-        if ($registration_date) {
-            $query->whereHas('students', function ($query) use ($registration_date) {
-                $query->where('registration_date', $registration_date);
+        // Filter the student list to include only those who are in the dropout list
+        $query = Batch::with(['students.user', 'students.order', 'course.course_category'])
+            ->whereHas('students', function ($query) use ($dropout_student_ids) {
+                $query->whereIn('student_id', $dropout_student_ids);
+            })
+            ->has('students');
+
+        if ($request->filled('name')) {
+            $query->whereHas('students.user', function($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->input('name') . '%');
             });
         }
 
-        if ($name) {
-            $query->whereHas('students.user', function ($query) use ($name) {
-                $query->where('name', 'like', '%' . $name . '%');
+        if ($request->filled('phone_number')) {
+            $query->whereHas('students', function($q) use ($request) {
+                $q->where('phone_number',$request->input('phone_number'));
             });
         }
 
-        if ($phone_number) {
-            $query->whereHas('students', function ($query) use ($phone_number) {
-                $query->where('phone_number', 'like', '%' . $phone_number . '%');
+        if ($request->filled('registration_date')) {
+            $query->whereHas('students', function($q) use ($request) {
+                $q->where('registration_date', $request->input('registration_date'));
             });
         }
 
-        if ($category_name) {
-            $query->whereHas('course.category', function ($query) use ($category_name) {
-                $query->where('category_name', 'like', '%' . $category_name . '%');
+        if ($request->filled('category_name')) {
+            $query->whereHas('course.category', function($q) use ($request) {
+                $q->where('category_name', $request->input('category_name'));
             });
         }
 
-        if ($batch_id) {
-            $query->where('batch_id', 'like', '%' . $batch_id . '%');
+        if ($request->filled('batch_id')) {
+
+            $query->where('batch_id', $request->input('batch_id'));
         }
 
         return $query->paginate(12);
     }
+
 
 }

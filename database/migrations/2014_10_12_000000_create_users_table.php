@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('expertise')->nullable();
             $table->string('image')->nullable();
             $table->string('user_status')->default(0);
+            $table->string('phone_number')->nullable();
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();

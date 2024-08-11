@@ -53,5 +53,10 @@ class Student extends Model
         return $this->hasOne(Attendance::class,'student_id','id');
     }
 
+    public function review():HasOne
+    {
+        return $this->hasOne(Review::class);
+    }
+
 
 }
