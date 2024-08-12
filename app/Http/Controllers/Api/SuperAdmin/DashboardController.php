@@ -124,23 +124,23 @@ class DashboardController extends Controller
                                ->sum('amount');
 
         //  Total student
-        $total_student = AddStudent::count();
-        $running_student = AddStudent::where('status','enrolled')->count();
-        $course_complet = AddStudent::where('status','complet')->count();
-        $total_trainer =  Trainer::count();
+        $total_student = Student::count();
+        $running_student = BatchStudent::where('status','enrolled')->count();
+        $course_complete = BatchStudent::where('status','complete')->count();
+        $total_trainer =  Teacher::count();
 
         // Return the response as JSON
         return response()->json([
             'status' => 'success',
             'data' => [
-                'total_incom'=> $total_income,
+                'total_income'=> $total_income,
                 'daily_income' => $daily_income,
                 'weekly_income' => $weekly_income,
                 'monthly_income' => $monthly_income,
                 'total_student' => $total_student,
                 'running_student'=>$running_student,
-                'complet_course' => $course_complet,
-                'total_trainer'=>$total_trainer,
+                'complete_course' => $course_complete,
+                'total_teacher'=>$total_trainer,
             ]
         ]);
     }

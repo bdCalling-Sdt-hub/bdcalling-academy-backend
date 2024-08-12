@@ -11,6 +11,7 @@ use App\Models\Video;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\NotificationController;
 
 class ModuleController extends Controller
 {
@@ -74,6 +75,15 @@ class ModuleController extends Controller
 //                    return $quiz;
                     $quiz->save();
                 }
+            }
+
+            if (auth()->user()->role == 'MENTOR'){
+                $result = app('App\Http\Controllers\NotificationController')->sendAdminNotification('New module added by',$module->created_at,auth()->user()->name,auth()->user()->teacher);
+            }
+            if (auth()->user()->role == 'MENTOR'){
+                $admin = User::where('role', 'ADMIN')->first(); // Assuming there is an admin role in your users table
+                $message = 'New module added by ' . auth()->user()->name;
+                $result = app('App\Http\Controllers\NotificationController')->sendAdminNotification($message, now(), auth()->user()->name, $admin);
             }
 
             DB::commit();

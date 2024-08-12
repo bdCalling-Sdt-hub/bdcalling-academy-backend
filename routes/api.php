@@ -7,6 +7,7 @@ use App\Http\Controllers\Batch\BatchSyncController;
 use App\Http\Controllers\Calculation\CostController;
 use App\Http\Controllers\FollowUpController;
 use App\Http\Controllers\ModuleController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PaymentSslcommerzeController;
 use App\Http\Controllers\PhoenixStudentController;
 use App\Http\Controllers\PhoenixBatchController;
@@ -150,7 +151,6 @@ Route::get('/destry-subscriber/{id}', [FreSemenarController::class, 'destroy_sub
 
 Route::middleware(['super.admin','auth:api'])->group(function (){
 
-
     //===================== Show Batch wise teacher--------------------
     Route::get('/show-assign-module',[RTeacherController::class,'showAssignModule']);
 
@@ -282,6 +282,9 @@ Route::middleware(['admin','auth:api'])->group(function (){
     Route::resource('/trainer-reviews', TrainerReviewController::class)->only('index');
 
     Route::get('/publish-trainer-reviews/{id}', [TrainerReviewController::class, 'publishTrainerReview']);
+
+    Route::get('/admin-notification', [NotificationController::class, 'adminNotification']);
+    Route::get('/read-notification', [NotificationController::class, 'readNotificationById']);
 });
 
 Route::middleware(['student.admin','auth:api'])->group(function (){

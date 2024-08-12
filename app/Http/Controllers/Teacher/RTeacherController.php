@@ -22,7 +22,7 @@ class RTeacherController extends Controller
 
     public function index()
     {
-        $teachers = Teacher::with('user','category')->paginate(8);
+        $teachers = Teacher::with('user.teacher','category')->paginate(8);
         return response()->json(['message' => 'Teacher List', 'teacher' => $teachers],200);
     }
 
