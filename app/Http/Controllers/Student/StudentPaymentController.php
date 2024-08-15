@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AdmitPaymentRequest;
+use App\Models\Batch;
 use App\Models\Order;
 use App\Models\Student;
 use Illuminate\Http\Request;
@@ -19,6 +20,7 @@ class StudentPaymentController extends Controller
 
         $student = $request->student_id;
         $batch = $request->batch_id;
+
 
         $course_fee = $request->course_fee;
         $discount_price = $request->discount_price;

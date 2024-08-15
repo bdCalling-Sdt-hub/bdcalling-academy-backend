@@ -134,7 +134,7 @@ class AdmitController extends Controller
         $dropout_student_ids = $dropout_student->pluck('student_id')->toArray();
 
         // Filter the student list to include only those who are in the dropout list
-        $query = Batch::with(['students.user', 'students.order', 'course.course_category'])
+        $query = Batch::with(['students.user', 'students.order', 'course.course_category'])->where('batch_id', 'like', '%' . 'BCA' . '%')
             ->whereHas('students', function ($query) use ($dropout_student_ids) {
                 $query->whereIn('student_id', $dropout_student_ids);
             })
@@ -236,7 +236,7 @@ class AdmitController extends Controller
     public function showDropOutStudent(Request $request)
     {
         // Get the list of dropout students
-        $dropout_student = BatchStudent::where('status', 'dropout')->get();
+        $dropout_student = BatchStudent::whereIn('status',['dropout','refunded'])->get();
 
         // Extract the student IDs of the dropout students
         $dropout_student_ids = $dropout_student->pluck('student_id')->toArray();

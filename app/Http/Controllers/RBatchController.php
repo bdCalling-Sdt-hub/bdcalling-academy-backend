@@ -18,6 +18,11 @@ class RBatchController extends Controller
         if ($request->has('batch_name')) {
             $query->where('batch_name', 'like', '%' . $request->input('batch_name') . '%');
         }
+
+        if ($request->has('no_pagination')) {
+            $batches = $query->get();
+            return response()->json(['message' => 'Batch List', 'data' => $batches]);
+        }
         $batches = $query->paginate(12);
         return response()->json(['message' => 'Batch List', 'data' => $batches]);
     }

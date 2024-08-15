@@ -16,5 +16,9 @@ class BatchStudent extends Model
     {
         return $this->belongsTo(Batch::class);
     }
+    public function student():BelongsTo
+    {
+        return $this->belongsTo(Student::class);
+    }
 
 }

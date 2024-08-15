@@ -13,7 +13,7 @@ class IncludeCostController extends Controller
     {
         $query = IncludeCost::query();
         if ($request->filled('date')) {
-            $query->where('created_at',$request->date);
+            $query->whereDate('created_at',$request->date);
         }
         $costs = $query->paginate(10);
         return response()->json($costs);

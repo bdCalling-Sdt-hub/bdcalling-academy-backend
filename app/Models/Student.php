@@ -58,5 +58,10 @@ class Student extends Model
         return $this->hasOne(Review::class);
     }
 
+    public function batch_students():HasMany
+    {
+        return $this->hasMany(BatchStudent::class);
+    }
+
 
 }

@@ -19,6 +19,13 @@ class RCategoryController extends Controller
         if ($category_name) {
             $query->where('name', 'like', '%' . $category_name . '%');
         }
+        if ($request->filled('no_pagination')) {
+            $category = $query->get();
+            return response()->json([
+                'message' => 'Categories',
+                'data' => $category,
+            ]);
+        }
         $category = $query->paginate(9);
         return response()->json([
             'message' => 'Categories',

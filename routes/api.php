@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\Student\QuizeController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Batch\BatchSyncController;
 use App\Http\Controllers\Calculation\CostController;
+use App\Http\Controllers\CertificateController;
 use App\Http\Controllers\FollowUpController;
 use App\Http\Controllers\ModuleController;
 use App\Http\Controllers\NotificationController;
@@ -14,6 +15,7 @@ use App\Http\Controllers\PhoenixBatchController;
 use App\Http\Controllers\RBatchController;
 use App\Http\Controllers\RCategoryController;
 use App\Http\Controllers\RCourseController;
+use App\Http\Controllers\RefundController;
 use App\Http\Controllers\SslCommerzPaymentController;
 use App\Http\Controllers\Student\AdmitController;
 use App\Http\Controllers\Student\StudentController;
@@ -60,7 +62,8 @@ Route::group([
     ['middleware' => 'auth:api']
 ], function ($router) {
     Route::post('/register', [AuthController::class, 'register']);
-    Route::get('/email-verified/{token}', [AuthController::class, 'emailVerified'])->name('verify.email');
+    Route::get('/email-verified/{token}', [AuthController::class, 'emailVerifiedOtp'])->name('verify.email');
+    Route::post('/email-verified', [AuthController::class, 'emailVerified']);
 //    Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:login');
     Route::post('/login', [AuthController::class, 'login']);
     Route::get('/profile', [AuthController::class, 'loggedUserData']);
@@ -97,7 +100,7 @@ Route::post('/admit/payment', [AdmittedController::class, 'admittedPayment']);
 Route::get('/singel/addmit/student/{id}', [AdmittedController::class, 'singel_admitted_student']);
 Route::post('/dropout/addmit/student', [AdmittedController::class, 'dropout_student']);
 Route::get('/show/dropout/student', [DropoutStudentController::class, 'show_dropout_student']);
-Route::post('/refund', [DropoutStudentController::class, 'store_refund']);
+//Route::post('/refund', [DropoutStudentController::class, 'store_refund']);
 Route::get('/show-event-student', [AllStudentController::class, 'event_type_student']);
 
 // ========================= Add student ============== //
@@ -197,6 +200,8 @@ Route::middleware(['mentor','auth:api'])->group(function (){
 
     Route::resource('/trainer-reviews', TrainerReviewController::class)->only('show');
 
+    Route::get('teacher-dashboard',[TeacherDashboardController::class,'teacherDashboard']);
+
 });
 
 Route::middleware(['student'])->group(function (){
@@ -217,9 +222,11 @@ Route::middleware(['student'])->group(function (){
 
     Route::resource('/trainer-reviews', TrainerReviewController::class)->only('store');
 
+    Route::get('/show-student-certificate',[CertificateController::class,'showCertificate']);
+
+
 
 });
-
 
 
 //============================== Teachers Payment ========================================================
@@ -234,7 +241,7 @@ Route::post('/batch-teachers',[BatchSyncController::class,'syncBatch']);
 
 Route::post('/admit-student',[AdmitController::class,'admitStudent']);
 
-Route::get('/show-admit-student/v2',[AdmitController::class,'showAdmitStudentV2']);
+//Route::get('/show-admit-student/v2',[AdmitController::class,'showAdmitStudentV2']);
 Route::get('/dropout-student',[AdmitController::class,'dropOutStudent']);
 Route::get('/show-dropout-student',[AdmitController::class,'showDropOutStudent']);
 
@@ -285,6 +292,8 @@ Route::middleware(['admin','auth:api'])->group(function (){
 
     Route::get('/admin-notification', [NotificationController::class, 'adminNotification']);
     Route::get('/read-notification', [NotificationController::class, 'readNotificationById']);
+
+    Route::post('/refund', [RefundController::class, 'refund']);
 });
 
 Route::middleware(['student.admin','auth:api'])->group(function (){
@@ -304,7 +313,6 @@ Route::middleware(['mentor.admin','auth:api'])->group(function (){
     Route::resource('attendances',AttendanceController::class)->except('create','edit');
 
     Route::get('/show-admit-student',[AdmitController::class,'showAdmitStudent']);
-
     // =========================add module =============================
     Route::post('add-module',[ModuleController::class,'addModule']);
 
@@ -313,6 +321,8 @@ Route::middleware(['mentor.admin','auth:api'])->group(function (){
     Route::post('update-module/{id}',[ModuleController::class,'updateModule']);
 
     Route::post('update-module-video/{id}',[ModuleController::class,'updateModuleVideo']);
+
+    Route::post('update-quiz/{id}',[ModuleController::class,'updateQuiz']);
 
 
     Route::get('show-module/{id}',[ModuleController::class,'getSingleModule']);
@@ -335,6 +345,10 @@ Route::middleware(['mentor.admin','auth:api'])->group(function (){
 
 Route::middleware(['student.mentor.admin','auth:api'])->group(function (){
     Route::resource('/students',StudentController::class)->only('update');
+
+    Route::get('/read-notification/{id}',[NotificationsController::class,'readNotificationById']);
+
+    Route::get('/notifications', [NotificationController::class, 'notification']);
 });
 
 //Phoenix Batch Student

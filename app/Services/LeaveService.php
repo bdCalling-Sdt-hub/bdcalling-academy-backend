@@ -21,6 +21,7 @@ class LeaveService
 
     public function showLeaveRequest()
     {
-        return LeaveApplication::paginate(2);
+        $user_id = auth()->user()->id;
+        return LeaveApplication::where('user_id',$user_id)->paginate(12);
     }
 }

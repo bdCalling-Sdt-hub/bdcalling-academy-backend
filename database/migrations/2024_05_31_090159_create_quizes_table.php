@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('quizes', function (Blueprint $table) {
             $table->id();
             $table->foreignId('course_module_id')->constrained('course_modules')->onDelete('cascade');
-            $table->json('questions');
-            $table->integer('mark')->nullable();
+            $table->json('questions')->nullable();
+            $table->integer('marks')->nullable();
             $table->string('exam_name')->nullable();
             $table->timestamps();
         });

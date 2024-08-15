@@ -16,6 +16,10 @@ class RCourseController extends Controller
         if ($request->filled('course_type')) {
                 $query->where('course_type', $request->input('course_type'));
         }
+        if ($request->filled('no_pagination')) {
+            $courses = $query->get();
+            return response($courses, 200);
+        }
         $courses = $query->paginate(8);
         return response($courses, 200);
     }

@@ -3,22 +3,25 @@
 namespace App\Http\Controllers;
 
 use App\Notifications\AdminNotification;
+use App\Notifications\StudentNotification;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Notification;
+use DB;
 
 class NotificationController extends Controller
 {
-//    public function guard()
-//    {
-//        return Auth::guard('api');
-//    }
+    public function guard()
+    {
+        return Auth::guard('api');
+    }
 
 
-    function sendNotification($message = null, $time = null, $data = null)
+    function sendNotification($message = null, $time = null,$name = null, $data = null)
     {
         try {
-            Notification::send($data, new UserNotification($message, $time, $data));
+            Notification::send($data, new StudentNotification($message, $time, $name, $data));
             return response()->json([
                 'success' => true,
                 'msg' => 'Notification Added',
@@ -49,9 +52,9 @@ class NotificationController extends Controller
         if ($user) {
             $userId = $user->id;
             $query = DB::table('notifications')
-                ->where('notifiable_type', 'App\Models\User')
+//                ->where('notifiable_type', 'App\Models\User')
                 ->where('notifiable_id', $userId)
-                ->where('type', '!=', 'App\\Notifications\\AdminNotification')
+//                ->where('type', '!=', 'App\\Notifications\\AdminNotification')
                 ->orderBy('created_at', 'desc')
                 ->get();
 
@@ -119,23 +122,23 @@ class NotificationController extends Controller
             ->paginate(7);
 
 
-        $formattedReadNotifications = $Notifications->map(function($notification) {
-            $notification->data = json_decode($notification->data);
-            return $notification;
-        });
+//        $formattedReadNotifications = $Notifications->map(function($notification) {
+//            $notification->data = json_decode($notification->data);
+//            return $notification;
+//        });
 
         return response()->json([
-            'message' => 'Notifications are given below',
-            'Notifications' => $formattedReadNotifications,
+            'message' => 'Notifications List',
+            'notifications' => $Notifications,
 
-            'pagination' => [
-                'current_page' => $Notifications->currentPage(),
-                'total_pages' => $Notifications->lastPage(),
-                'per_page' => $Notifications->perPage(),
-                'total' => $Notifications->total(),
-                'next_page_url' => $Notifications->nextPageUrl(),
-                'prev_page_url' => $Notifications->previousPageUrl(),
-            ]
+//            'pagination' => [
+//                'current_page' => $Notifications->currentPage(),
+//                'total_pages' => $Notifications->lastPage(),
+//                'per_page' => $Notifications->perPage(),
+//                'total' => $Notifications->total(),
+//                'next_page_url' => $Notifications->nextPageUrl(),
+//                'prev_page_url' => $Notifications->previousPageUrl(),
+//            ]
         ]);
     }
 

@@ -65,28 +65,19 @@ class ModuleController extends Controller
 
             $quizes = json_decode($request->questions, true);
 
+
             if ($request->questions) {
-                foreach ($quizes as $quiz) {
+                foreach ($quizes as $index => $quiz) {
                     $quiz = new Quize();
                     $quiz->course_module_id = $module->id;
                     $quiz->questions = $request->questions;
                     $quiz->exam_name = $request->exam_name;
                     $quiz->marks = $request->marks;
-//                    return $quiz;
                     $quiz->save();
                 }
             }
 
-            if (auth()->user()->role == 'MENTOR'){
-                $result = app('App\Http\Controllers\NotificationController')->sendAdminNotification('New module added by',$module->created_at,auth()->user()->name,auth()->user()->teacher);
-            }
-            if (auth()->user()->role == 'MENTOR'){
-                $admin = User::where('role', 'ADMIN')->first(); // Assuming there is an admin role in your users table
-                $message = 'New module added by ' . auth()->user()->name;
-                $result = app('App\Http\Controllers\NotificationController')->sendAdminNotification($message, now(), auth()->user()->name, $admin);
-            }
-
-            DB::commit();
+                DB::commit();
 
             return response()->json([
                 'status' => 200,
@@ -234,4 +225,37 @@ class ModuleController extends Controller
         $query = CourseModule::with('videos','quiz')->where('id',$id)->first();
         return dataResponse(200, 'Module Details', $query);
     }
+
+    public function updateQuiz(Request $request, $moduleId)
+    {
+        try {
+            // Decode the questions from JSON format
+            $quizes = json_decode($request->questions, true);
+
+            // Check if the questions data is not empty
+            if (empty($quizes)) {
+                return response()->json(['error' => 'No questions provided.'], 400);
+            }
+
+            // Delete previous quizzes for the given module
+            Quize::where('course_module_id', $moduleId)->delete();
+
+            // Loop through the decoded questions and create new quiz entries
+            foreach ($quizes as $quiz) {
+                $quiz = new Quize();
+                $quiz->course_module_id = $moduleId;
+                $quiz->questions = $request->questions;
+                $quiz->exam_name = $request->exam_name;
+                $quiz->marks = $request->marks;
+                $quiz->save();
+            }
+
+            return response()->json(['success' => 'Quiz updated successfully.'], 200);
+
+        } catch (\Exception $e) {
+            // Handle any errors that may occur
+            return response()->json(['error' => 'An error occurred: ' . $e->getMessage()], 500);
+        }
+    }
+
 }

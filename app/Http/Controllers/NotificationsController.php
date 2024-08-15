@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class NotificationsController extends Controller
 {
@@ -47,5 +49,23 @@ class NotificationsController extends Controller
         }
 
         return response()->json(['status'=>'error','message'=>'User not found'], 401);
+    }
+
+    public function readNotificationById(Request $request)
+    {
+        $notification = DB::table('notifications')->find($request->id);
+        if ($notification) {
+            $notification->read_at = Carbon::now();
+            DB::table('notifications')->where('id', $notification->id)->update(['read_at' => $notification->read_at]);
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Notification read successfully.',
+            ], 200);
+        } else {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Notification not found',
+            ], 404);
+        }
     }
 }

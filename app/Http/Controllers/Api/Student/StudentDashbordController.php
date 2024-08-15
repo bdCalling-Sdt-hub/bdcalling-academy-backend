@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\Api\Student;
+use App\Models\BatchStudent;
 use App\Models\Course;
 use App\Models\Order;
 use App\Models\Student;
@@ -17,17 +18,17 @@ class StudentDashbordController extends Controller
          $auth = auth()->user()->id;
          $check_student = Student::where('user_id', $auth)->pluck('id');
          $complete_class = Attendance::whereIn('student_id', $check_student)->count();
-         $complete_course = Student::where('user_id',$auth)->where('status','complet')->count();
+         $complete_course = BatchStudent::where('student_id',$check_student)->where('status','complete')->count();
          $payment =  Order::where('student_id',$auth)->sum('amount');
          $course_fee = Order::where('student_id',$auth)->sum('course_fee');
          $due = $course_fee - $payment;
 
          return response()->json([
             'status'=>'success',
-            'complet_course'=>$complete_course,
+            'complete_course'=>$complete_course,
             'total_payment'=>$payment,
             'total_due'=>$due,
-            'complite_class'=>$complete_class,
+            'complete_class'=>$complete_class,
         ], 200);
     }
 

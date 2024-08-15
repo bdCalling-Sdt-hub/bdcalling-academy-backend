@@ -103,7 +103,7 @@ class AuthController extends Controller
         return response()->json(['message' => 'Your credential is wrong'], 402);
     }
 
-    public function emailVerified(Request $request, $token)
+    public function emailVerifiedOtp(Request $request, $token)
     {
         $user = User::where('otp', $token)->first();
 
@@ -127,12 +127,45 @@ class AuthController extends Controller
             'phone_number' => $phone_number,
         ]);
 
+        $result = app('App\Http\Controllers\NotificationController')->sendNotification('Account Setup Successful', $user->created_at, $user->name, $user);
+
         return response()->json(['message' => 'Email verified successfully'], 200);
+    }
+
+    public function emailVerified(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'otp' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response(['errors' => $validator->errors()], 422);
+        }
+        if ($request->otp) {
+            $user = User::where('otp', $request->otp)->first();
+            if ($user != null) {
+                $token = $this->guard()->login($user);
+            }
+        }
+
+        $user = User::where('otp', $request->otp)->first();
+
+        if (!$user) {
+            return response(['message' => 'Invalid'], 422);
+        }
+        $user->email_verified_at = new Carbon();
+        $user->otp = 0;
+        $user->save();
+
+        return response([
+            'message' => 'Email verified successfully',
+            'token' => $this->respondWithToken($token),
+        ]);
     }
 
     public function responseWithToken($token)
     {
-        $user = Auth::guard('api')->user()->makeHidden(['mobile', 'address', 'image', 'otp', 'created_at', 'updated_at']);
+        $user = Auth::guard('api')->user()->makeHidden([ 'otp', 'created_at', 'updated_at']);
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',

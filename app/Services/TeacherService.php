@@ -134,6 +134,10 @@ class TeacherService
         if ($request->filled('leave_status')) {
             $query->where('leave_status', 'like','%'  . $request->input('leave_status') . '%' );
         }
+        if ($request->filled('auth_type')) {
+            $teacher_id = auth()->user()->id;
+            $query->where('user_id', $teacher_id);
+        }
         return $query->paginate(9);
     }
 

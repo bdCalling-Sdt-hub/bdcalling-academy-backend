@@ -46,7 +46,7 @@ class AttendanceController extends Controller
             'date' => 'required|date',
             'attendance_by' => 'required|integer',
             'attendances' => 'required|array',
-            'attendances.*.student_id' => 'required|integer|exists:batch_students,id',
+            'attendances.*.student_id' => 'required|integer|exists:students,id',
             'attendances.*.is_present' => 'required|boolean',
         ]);
 

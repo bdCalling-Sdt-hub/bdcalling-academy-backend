@@ -7,6 +7,7 @@ use App\Http\Requests\TeacherRequest;
 use App\Http\Requests\UpdateTeacherRequest;
 use App\Models\Batch;
 use App\Models\BatchTeacher;
+use App\Models\LeaveApplication;
 use App\Models\Teacher;
 use App\Models\User;
 use App\Services\TeacherService;
@@ -20,9 +21,14 @@ use Illuminate\Support\Facades\Log;
 class RTeacherController extends Controller
 {
 
-    public function index()
+    public function index(Request $request)
     {
-        $teachers = Teacher::with('user.teacher','category')->paginate(8);
+        $query = Teacher::with('user.teacher','category');
+        if ($request->filled('no_pagination')){
+            $teachers = $query->get();
+            return response()->json(['message' => 'Teacher List', 'teacher' => $teachers],200);
+        }
+        $teachers = $query->paginate(8);
         return response()->json(['message' => 'Teacher List', 'teacher' => $teachers],200);
     }
 

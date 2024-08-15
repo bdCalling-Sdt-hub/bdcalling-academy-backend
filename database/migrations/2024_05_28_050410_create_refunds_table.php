@@ -13,10 +13,9 @@ return new class extends Migration
     {
         Schema::create('refunds', function (Blueprint $table) {
             $table->id();
-            $table->integer('user_id');
-            $table->integer('course_id');
-            $table->integer('batch_id');
-            $table->double('refund_amount');
+            $table->foreignId('student_id')->constrained('students');
+            $table->foreignId('batch_id')->constrained('batches');
+            $table->string('refund_amount');
             $table->string('refund_by');
             $table->timestamps();
         });
